@@ -1,10 +1,13 @@
 package com.example.admin.controllers;
 
-import com.example.admin.utils.ExceptionManager;
+import com.example.admin.utils.AdminDtoExceptionManager;
 import com.example.library.dtos.AdminDto;
 import com.example.library.services.implementations.AdminServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,21 +22,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class LoginController {
-  private final ExceptionManager exceptionManager;
+  private final AdminDtoExceptionManager adminDtoExceptionManager;
   private final AdminServiceImpl adminService;
   private final BCryptPasswordEncoder passwordEncoder;
 
   /**
    * Constructs a new instance of the LoginController.
    *
-   * @param exceptionManager  the ExceptionManager for handling exceptions
+   * @param adminDtoExceptionManager  the AdminDtoExceptionManager for handling exceptions
    * @param adminService      the AdminServiceImpl for admin-related operations
    * @param passwordEncoder   the BCryptPasswordEncoder for encoding passwords
    */
   @Autowired
-  public LoginController(ExceptionManager exceptionManager, AdminServiceImpl adminService,
+  public LoginController(AdminDtoExceptionManager adminDtoExceptionManager,
+                         AdminServiceImpl adminService,
                          BCryptPasswordEncoder passwordEncoder) {
-    this.exceptionManager = exceptionManager;
+    this.adminDtoExceptionManager = adminDtoExceptionManager;
     this.adminService = adminService;
     this.passwordEncoder = passwordEncoder;
   }
@@ -44,9 +48,19 @@ public class LoginController {
     return "login";
   }
 
+  /**
+   * Handles the request for the home page.
+   *
+   * @param model the model to be populated with attributes
+   * @return the view name for the home page or a redirect to the login page if not authenticated
+   */
   @RequestMapping("/index")
   public String home(Model model) {
     model.addAttribute("title", "Home Page");
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+      return "redirect:/login";
+    }
     return "index";
   }
 
@@ -81,7 +95,7 @@ public class LoginController {
   public String addNewAdmin(@Valid @ModelAttribute("adminDto") AdminDto adminDto,
                             BindingResult result, Model model) {
 
-    exceptionManager.validate(adminDto, result, model);
+    adminDtoExceptionManager.validate(adminDto, result, model);
 
     try {
       if (result.hasErrors() || model.containsAttribute("emailError")

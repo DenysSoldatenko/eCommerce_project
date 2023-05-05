@@ -28,6 +28,11 @@ public class Category {
   private boolean isDeleted;
   private boolean isActivated;
 
+  /**
+   * Constructs a new Category object with the specified name.
+   *
+   * @param name the name of the category
+   */
   public Category(String name) {
     this.name = name;
     this.isActivated = true;

@@ -10,15 +10,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 /**
- * Utility class for managing exceptions and validation in the admin module.
+ * Utility class for handling exceptions related to the Admin DTO.
  */
 @Component
-public class ExceptionManager {
+public class AdminDtoExceptionManager {
 
   private final AdminServiceImpl adminService;
 
   @Autowired
-  public ExceptionManager(AdminServiceImpl adminService) {
+  public AdminDtoExceptionManager(AdminServiceImpl adminService) {
     this.adminService = adminService;
   }
 
