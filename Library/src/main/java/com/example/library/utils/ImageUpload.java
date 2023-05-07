@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Component
 public class ImageUpload {
+  private final String uploadFolder = "Admin/src/main/resources/static/img/image-product";
 
   /**
    * Uploads an image file.
@@ -22,7 +23,6 @@ public class ImageUpload {
   public boolean uploadImage(MultipartFile imageProduct) {
     boolean isUpload = false;
     try {
-      String uploadFolder = "Admin/src/main/resources/static/img/image-product";
       Files.copy(imageProduct.getInputStream(),
           Paths.get(uploadFolder + File.separator, imageProduct.getOriginalFilename()),
           StandardCopyOption.REPLACE_EXISTING);
@@ -31,6 +31,17 @@ public class ImageUpload {
       e.printStackTrace();
     }
     return isUpload;
+  }
+
+  public boolean checkExisted(MultipartFile imageProduct) {
+    boolean isExisted = false;
+    try {
+      File file = new File(uploadFolder + "\\" + imageProduct.getOriginalFilename());
+      isExisted = file.exists();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return isExisted;
   }
 }
 

@@ -1,40 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<head th:replace="fragments :: header">
-    <title>Update product</title>
-</head>
+<head th:replace="fragments :: header"></head>
 <body id="page-top">
 <!-- Page Wrapper -->
 <div id="wrapper">
-    <!-- Sidebar -->
     <ul th:replace="fragments :: sidebar"></ul>
-    <!-- End of Sidebar -->
-    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
         <div id="content">
-            <!-- Top bar -->
             <nav th:replace="fragments :: topbar"></nav>
-            <!-- End of Top bar -->
-            <!-- Begin Page Content -->
             <div class="container-fluid">
-                <!-- Page Heading -->
                 <div th:if="${success}" class="text-center alert alert-success">
                     <p th:text="${success}"></p>
                 </div>
                 <div th:if="${fail}" class="text-center alert alert-danger">
                     <p th:text="${fail}"></p>
                 </div>
-                <form class="form-horizontal" th:action="@{/update-product/{id} (id = ${productDto.id})}" method="post" enctype="multipart/form-data" th:object="${productDto}">
+                <form class="form-horizontal" th:action="@{/add-product}" method="post" enctype="multipart/form-data" th:object="${productNew}">
                     <fieldset>
                         <!-- Form Name -->
-                        <legend>UPDATE PRODUCT</legend>
+                        <legend>ADD PRODUCT</legend>
                         <!-- Text input-->
                         <div class="form-group">
                             <label class="col-md-4 control-label" for="product_name">Name: </label>
                             <div class="col-md-4">
                                 <input id="product_name" th:field="*{name}"
-                                       name="product_name" class="form-control input-md" type="text">
+                                       name="product_name" class="form-control input-md" placeholder="Enter product name" type="text">
                             </div>
                         </div>
                         <!-- Select Basic -->
@@ -53,7 +44,7 @@
                             <label class="col-md-4 control-label" for="description">Description: </label>
                             <div class="col-md-4">
                                 <input id="description" th:field="*{description}"
-                                       name="description" class="form-control input-md" type="text">
+                                       name="description" class="form-control input-md" placeholder="Enter product description" type="text">
                             </div>
                         </div>
                         <!-- Text input-->
@@ -74,33 +65,20 @@
                         </div>
                         <!-- Text input-->
                         <div class="form-group">
-                            <label class="col-md-4 control-label" for="sale">Sale Price: </label>
-                            <div class="col-md-4">
-                                <input id="sale" name="sale" th:field="*{salePrice}"
-                                       class="form-control input-md" step="0.01" min="0.00" value="0.00" type="number">
-                            </div>
-                        </div>
-                        <!-- Text input-->
-                        <div class="form-group">
-                            <div class="col-md-4">
                                 <!-- File Button -->
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label" for="imageProduct">Image Product: </label>
-                                    <img src="data:image/jpeg;base64,"
-                                         style="height: 55px; width: 55px;" th:attrappend="src=${productDto.image}">
+                                    <label class="col-md-4 control-label" for="imageProduct">Image product: </label>
                                     <div class="col-md-4">
                                         <input id="imageProduct" name="imageProduct"
                                                class="input-file" type="file" accept=".png, .jpeg, .jpg">
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </fieldset>
-                    <button type="button" class="btn btn-secondary"
-                            onclick="window.location.href='/admin/products'">Return to products</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/admin/products'">Return to products</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>
-            </div>
+                </div>
             <!-- /.container-fluid -->
         </div>
         <!-- End of Main Content -->
