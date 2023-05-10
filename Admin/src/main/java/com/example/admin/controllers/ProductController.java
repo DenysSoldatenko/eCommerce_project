@@ -3,9 +3,11 @@ package com.example.admin.controllers;
 import com.example.admin.utils.ProductDtoExceptionManager;
 import com.example.library.dtos.ProductDto;
 import com.example.library.models.Category;
+import com.example.library.models.Product;
 import com.example.library.services.CategoryService;
 import com.example.library.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,7 +80,7 @@ public class ProductController {
       attributes.addFlashAttribute("fail", productDtoExceptionManager.getMessage());
       return "redirect:/add-product";
     }
-    return "redirect:/products";
+    return "redirect:/products/0";
   }
 
   @GetMapping("/update-product/{id}")
@@ -107,11 +109,11 @@ public class ProductController {
       attributes.addFlashAttribute("fail", productDtoExceptionManager.getMessage());
       return "redirect:/update-product/{id}";
     }
-    return "redirect:/products";
+    return "redirect:/products/0";
   }
 
   @RequestMapping(value = "/enable-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
-  public String enabledProduct(@PathVariable("id")Long id, RedirectAttributes attributes) {
+  public String enabledProduct( @PathVariable("id")Long id, RedirectAttributes attributes) {
     try {
       productService.enableById(id);
       attributes.addFlashAttribute("success", "Enabled successfully!");
@@ -119,7 +121,7 @@ public class ProductController {
       e.printStackTrace();
       attributes.addFlashAttribute("fail", "Failed to enabled!");
     }
-    return "redirect:/products";
+    return "redirect:/products/0";
   }
 
   @RequestMapping(value = "/delete-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
@@ -131,6 +133,39 @@ public class ProductController {
       e.printStackTrace();
       attributes.addFlashAttribute("error", "Failed to deleted");
     }
-    return "redirect:/products";
+    return "redirect:/products/0";
+  }
+
+  @GetMapping("/products/{pageNo}")
+  public String productPage(@PathVariable("pageNo") int pageNo, Model model, Principal principal){
+    if(principal == null){
+      return "redirect:/login";
+    }
+    Page<Product> products = productService.pageProducts(pageNo);
+    model.addAttribute("size", products.getSize());
+    model.addAttribute("totalPages", products.getTotalPages());
+    model.addAttribute("currentPage", pageNo);
+    model.addAttribute("products", products);
+    return "products";
+  }
+
+  @GetMapping("/search-result/{pageNo}")
+  public String searchProducts(@PathVariable("pageNo")int pageNo, @RequestParam("keyword") String keyword,
+                               Model model, Principal principal){
+    if(principal == null){
+      return "redirect:/login";
+    }
+    Page<Product> products = productService.searchProducts(pageNo, keyword);
+    model.addAttribute("title", "Search Result");
+    model.addAttribute("products", products);
+    model.addAttribute("size", products.getSize());
+    model.addAttribute("currentPage", pageNo);
+    model.addAttribute("totalPages", products.getTotalPages());
+    model.addAttribute("keyword", keyword);
+
+    System.out.println(products + "\n\n\n\n\n");
+    System.out.println(products.getSize() + "\n\n\n\n\n");
+    System.out.println(products.getTotalPages() + "\n\n\n\n\n");
+    return "result-products";
   }
 }

@@ -11,6 +11,9 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,8 +102,15 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public Optional<Product> findById(Long id) {
-    return productRepository.findById(id);
+  public Page<Product> pageProducts(int pageNo) {
+    Pageable pageable = PageRequest.of(pageNo, 5);
+    return productRepository.pageProduct(pageable);
+  }
+
+  @Override
+  public Page<Product> searchProducts(int pageNo, String keyword) {
+    Pageable pageable = PageRequest.of(pageNo, 5);
+    return productRepository.searchProducts(keyword, pageable);
   }
 
   @Override

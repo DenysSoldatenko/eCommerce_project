@@ -4,6 +4,8 @@ import com.example.library.dtos.ProductDto;
 import com.example.library.models.Product;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -20,7 +22,9 @@ public interface ProductService {
 
   void enableById(Long id);
 
-  Optional<Product> findById(Long id);
+  Page<Product> pageProducts(int pageNo);
+
+  Page<Product> searchProducts(int pageNo, String keyword);
 
   ProductDto getById(Long id);
 }
