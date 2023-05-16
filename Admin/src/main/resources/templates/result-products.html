@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<head th:replace="fragments :: header"></head>
+<head th:replace="fragments :: header"><title th:text="${title}"></title></head>
 <body id="page-top">
 <!-- Page Wrapper -->
 <div id="wrapper">
@@ -48,7 +48,7 @@
                         <td th:text="${product.description}"></td>
                         <td th:text="${product.costPrice}"></td>
                         <td th:text="${product.currentQuantity}"></td>
-                        <td><img src="data:image/jpeg;base64," style="height: 55px; width: 55px;" th:attrappend="src=${product.image}" /></td>
+                        <td><img src="data:image/jpeg;base64," style="height: 55px; width: 55px;" th:attrappend="src=${product.image}" alt="image"/></td>
                         <td>
                             <a th:href="@{/update-product/{id} (id = ${product.id})}" class="btn btn-primary">Update</a>
                         </td>

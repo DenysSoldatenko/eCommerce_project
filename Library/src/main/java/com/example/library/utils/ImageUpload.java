@@ -33,6 +33,12 @@ public class ImageUpload {
     return isUpload;
   }
 
+  /**
+   * Checks if an image file already exists.
+   *
+   * @param imageProduct the image file to check
+   * @return true if the image file exists, false otherwise
+   */
   public boolean checkExisted(MultipartFile imageProduct) {
     boolean isExisted = false;
     try {

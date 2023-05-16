@@ -6,6 +6,9 @@ import com.example.library.models.Category;
 import com.example.library.models.Product;
 import com.example.library.services.CategoryService;
 import com.example.library.services.ProductService;
+import java.security.Principal;
+import java.util.List;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -20,10 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.util.List;
-import java.util.Objects;
-
 /**
  * Controller for managing products.
  */
@@ -36,6 +35,13 @@ public class ProductController {
 
   private final ProductDtoExceptionManager productDtoExceptionManager;
 
+  /**
+   * Constructs a new ProductController with the specified services and exception manager.
+   *
+   * @param productService           the ProductService to be used
+   * @param categoryService          the CategoryService to be used
+   * @param productDtoExceptionManager the ProductDtoExceptionManager to be used
+   */
   @Autowired
   public ProductController(ProductService productService,
                            CategoryService categoryService,
@@ -45,6 +51,14 @@ public class ProductController {
     this.productDtoExceptionManager = productDtoExceptionManager;
   }
 
+  /**
+   * Handles the request for displaying all products.
+   *
+   * @param model     the model to be populated with attributes
+   * @param principal the principal object representing the authenticated user
+   * @return the view name for displaying products
+   *     or a redirect to the login page if not authenticated
+   */
   @GetMapping("/products")
   public String products(Model model, Principal principal) {
     if (principal == null) {
@@ -57,6 +71,14 @@ public class ProductController {
     return "products";
   }
 
+  /**
+   * Displays the form for adding a new product.
+   *
+   * @param model     the model to be populated with attributes
+   * @param principal the principal object representing the authenticated user
+   * @return the view name for adding a new product
+   *     or a redirect to the login page if not authenticated
+   */
   @GetMapping("/add-product")
   public String addProductForm(Model model, Principal principal) {
     if (principal == null) {
@@ -68,6 +90,14 @@ public class ProductController {
     return "add-product";
   }
 
+  /**
+   * Adds a new product.
+   *
+   * @param productDto    the product DTO to add
+   * @param imageProduct  the image file for the product
+   * @param attributes    the redirect attributes
+   * @return a redirect to the product page after adding the product
+   */
   @PostMapping("/add-product")
   public String addProduct(@ModelAttribute("productNew") ProductDto productDto,
                            @RequestParam("imageProduct") MultipartFile imageProduct,
@@ -83,6 +113,15 @@ public class ProductController {
     return "redirect:/products/0";
   }
 
+  /**
+   * Displays the form for updating a product.
+   *
+   * @param id         the ID of the product to update
+   * @param model      the model to be populated with attributes
+   * @param principal  the principal object representing the authenticated user
+   * @return the view name for updating the product
+   *     or a redirect to the login page if not authenticated
+   */
   @GetMapping("/update-product/{id}")
   public String updateProductForm(@PathVariable("id") Long id, Model model, Principal principal) {
     if (principal == null) {
@@ -97,6 +136,14 @@ public class ProductController {
   }
 
 
+  /**
+   * Updates a product.
+   *
+   * @param productDto   the updated product DTO
+   * @param imageProduct the new image file for the product
+   * @param attributes   the redirect attributes
+   * @return a redirect to the product page after updating the product
+   */
   @PostMapping("/update-product/{id}")
   public String updateProduct(@ModelAttribute("productDto") ProductDto productDto,
                               @RequestParam("imageProduct")MultipartFile imageProduct,
@@ -112,8 +159,15 @@ public class ProductController {
     return "redirect:/products/0";
   }
 
+  /**
+   * Handles the request for enabling a product.
+   *
+   * @param id         the ID of the product to enable
+   * @param attributes the redirect attributes to add flash attributes
+   * @return a redirect to the product page after enabling the product
+   */
   @RequestMapping(value = "/enable-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
-  public String enabledProduct( @PathVariable("id")Long id, RedirectAttributes attributes) {
+  public String enabledProduct(@PathVariable("id")Long id, RedirectAttributes attributes) {
     try {
       productService.enableById(id);
       attributes.addFlashAttribute("success", "Enabled successfully!");
@@ -124,6 +178,13 @@ public class ProductController {
     return "redirect:/products/0";
   }
 
+  /**
+   * Handles the request for deleting a product.
+   *
+   * @param id         the ID of the product to delete
+   * @param attributes the redirect attributes to add flash attributes
+   * @return a redirect to the product page after deleting the product
+   */
   @RequestMapping(value = "/delete-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String deletedProduct(@PathVariable("id") Long id, RedirectAttributes attributes) {
     try {
@@ -136,12 +197,22 @@ public class ProductController {
     return "redirect:/products/0";
   }
 
+  /**
+   * Displays a specific page of products.
+   *
+   * @param pageNo     the page number
+   * @param model      the model to be populated with attributes
+   * @param principal  the principal object representing the authenticated user
+   * @return the view name for displaying the product page
+   *     or a redirect to the login page if not authenticated
+   */
   @GetMapping("/products/{pageNo}")
-  public String productPage(@PathVariable("pageNo") int pageNo, Model model, Principal principal){
-    if(principal == null){
+  public String productPage(@PathVariable("pageNo") int pageNo, Model model, Principal principal) {
+    if (principal == null) {
       return "redirect:/login";
     }
     Page<Product> products = productService.pageProducts(pageNo);
+    model.addAttribute("title", "Manage Product");
     model.addAttribute("size", products.getSize());
     model.addAttribute("totalPages", products.getTotalPages());
     model.addAttribute("currentPage", pageNo);
@@ -149,10 +220,21 @@ public class ProductController {
     return "products";
   }
 
+  /**
+   * Searches for products based on a keyword.
+   *
+   * @param pageNo     the page number
+   * @param keyword    the search keyword
+   * @param model      the model to be populated with attributes
+   * @param principal  the principal object representing the authenticated user
+   * @return the view name for displaying the search result
+   *     or a redirect to the login page if not authenticated
+   */
   @GetMapping("/search-result/{pageNo}")
-  public String searchProducts(@PathVariable("pageNo")int pageNo, @RequestParam("keyword") String keyword,
-                               Model model, Principal principal){
-    if(principal == null){
+  public String searchProducts(@PathVariable("pageNo")int pageNo,
+                               @RequestParam("keyword") String keyword,
+                               Model model, Principal principal) {
+    if (principal == null) {
       return "redirect:/login";
     }
     Page<Product> products = productService.searchProducts(pageNo, keyword);
@@ -162,10 +244,6 @@ public class ProductController {
     model.addAttribute("currentPage", pageNo);
     model.addAttribute("totalPages", products.getTotalPages());
     model.addAttribute("keyword", keyword);
-
-    System.out.println(products + "\n\n\n\n\n");
-    System.out.println(products.getSize() + "\n\n\n\n\n");
-    System.out.println(products.getTotalPages() + "\n\n\n\n\n");
     return "result-products";
   }
 }

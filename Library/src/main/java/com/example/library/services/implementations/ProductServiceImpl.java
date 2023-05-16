@@ -66,7 +66,9 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public Product update(MultipartFile imageProduct, ProductDto productDto) {
-    Product product = productRepository.getById(productDto.getId());
+    Product product = productRepository.findById(productDto.getId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+        "Product not found with id: " + productDto.getId()));
     try {
       handleImageOnUpdate(product, imageProduct);
     } catch (IOException e) {
@@ -125,6 +127,12 @@ public class ProductServiceImpl implements ProductService {
     }
   }
 
+  /**
+   * Sets the data from a Product entity to a ProductDto object.
+   *
+   * @param product    the Product entity
+   * @param productDto the ProductDto object
+   */
   public void setProductDtoData(Product product, ProductDto productDto) {
     productDto.setId(product.getId());
     productDto.setName(product.getName());
@@ -138,6 +146,13 @@ public class ProductServiceImpl implements ProductService {
     productDto.setActivated(product.isActivated());
   }
 
+  /**
+   * Handles the image on update operation for a Product entity.
+   *
+   * @param product       the Product entity to update
+   * @param imageProduct  the new image file
+   * @throws IOException if an I/O error occurs
+   */
   public void handleImageOnUpdate(Product product, MultipartFile imageProduct) throws IOException {
     if (imageProduct.isEmpty()) {
       product.setImage(product.getImage());
@@ -149,6 +164,13 @@ public class ProductServiceImpl implements ProductService {
     }
   }
 
+  /**
+   * Handles the image on create operation for a Product entity.
+   *
+   * @param product       the Product entity to create
+   * @param imageProduct  the image file to upload
+   * @throws IOException if an I/O error occurs
+   */
   public void handleImageOnCreate(Product product, MultipartFile imageProduct) throws IOException {
     if (imageProduct != null) {
       if (imageUpload.uploadImage(imageProduct)) {
