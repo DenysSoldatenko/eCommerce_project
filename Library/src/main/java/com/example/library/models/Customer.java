@@ -9,33 +9,28 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Represents a customer in the project.
  */
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "customers", uniqueConstraints =
-    @UniqueConstraint(columnNames = {
-      "username",
-      "image",
-      "phone_number"
-    })
-)
+@Table(name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class Customer {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,30 +40,30 @@ public class Customer {
   private String firstName;
   private String lastName;
   private String username;
-  private String country;
-
-  @Column(name = "phone_number")
+  private String password;
   private String phoneNumber;
-
   private String address;
 
-  @Lob
-  @Column(name = "image", columnDefinition = "MEDIUMBLOB")
-  private String image;
-
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinColumn(name = "city_id", referencedColumnName = "city_id")
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "name", referencedColumnName = "id")
   private City city;
 
-  @OneToOne(mappedBy = "customer")
-  private ShoppingCart shoppingCart;
-
-  @OneToMany(mappedBy = "customer")
-  private List<Order> orders;
+  private String country;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinTable(name = "customers_roles",
+  @JoinTable(name = "customer_role",
       joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "customer_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"))
   private Collection<Role> roles;
+
+  @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+  private ShoppingCart cart;
+
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+  private List<Order> orders;
+
+  public Customer() {
+    this.cart = new ShoppingCart();
+    this.orders = new ArrayList<>();
+  }
 }

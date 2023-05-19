@@ -5,13 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = "com.example.customer")
+/**
+ * The main class to start the customer module.
+ */
+@SpringBootApplication(scanBasePackages = {"com.example.customer.*", "com.example.library.*"})
 @EnableJpaRepositories(value = "com.example.library.repositories")
-@EntityScan(value = "com.ecommerce.library.model")
+@EntityScan(value = "com.example.library.models")
 public class CustomerApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(CustomerApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(CustomerApplication.class, args);
+  }
 }

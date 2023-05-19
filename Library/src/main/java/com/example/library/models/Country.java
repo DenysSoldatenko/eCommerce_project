@@ -11,17 +11,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents a city in the project.
+ * Represents a country in the project.
  */
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Entity
-@Table(name = "cities")
-public class City {
+@Table(name = "countries")
+@NoArgsConstructor
+@AllArgsConstructor
+public class Country {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "country_id")
   private Long id;
-
   private String name;
 }
