@@ -78,8 +78,7 @@
                                         <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4" th:each = "product : ${products}">
                                             <div class="products-single fix">
                                                 <div class="box-img-hover" >
-                                                    <img th:src = "*{'data:image/jpeg;base64,' + {product.image}}"
-                                                        class="img-fluid" alt="Image">
+                                                    <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${product.image}"  alt="image"/>
                                                     <div class="mask-icon">
                                                         <ul>
                                                             <li><a href="product-detail.html" data-toggle="tooltip"
@@ -103,8 +102,7 @@
                                             <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
                                                 <div class="products-single fix">
                                                     <div class="box-img-hover">
-                                                        <img th:src="*{'data:image/jpeg;base64,' + {productView.image}}" class="img-fluid"
-                                                            alt="Image">
+                                                        <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${productView.image}"  alt="image"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -119,30 +117,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
-                    <div class="product-categori">
-                        <div class="search-product">
-                            <form th:action="@{/search-product}" method="get">
-                                <input class="form-control" name="keyword" placeholder="Search here..." type="text">
-                                <button type="submit"> <i class="fa fa-search"></i> </button>
-                            </form>
-                        </div>
-                        <div class="filter-sidebar-left">
-                            <div class="title-left">
-                                <h3>Categories</h3>
-                            </div>
-                            <div class="list-group list-group-collapse list-group-sm list-group-tree"
-                                id="list-group-men" data-children=".sub-men" th:each="categoryDto : ${categories}">
-                                <a th:href="@{/find-products/{id}(id = ${categoryDto.id})}" class="list-group-item list-group-item-action" th:text="${categoryDto.name + '(' + categoryDto.productSize + ')'}"></a>
-                            </div>
-                        </div>
-                        <div class="filter-price-left">
-                            <div class="title-left">
                             </div>
                         </div>
                     </div>

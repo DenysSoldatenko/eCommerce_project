@@ -106,13 +106,13 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public Page<Product> pageProducts(int pageNo) {
     Pageable pageable = PageRequest.of(pageNo, 5);
-    return productRepository.pageProduct(pageable);
+    return productRepository.findAllProducts(pageable);
   }
 
   @Override
   public Page<Product> searchProducts(int pageNo, String keyword) {
     Pageable pageable = PageRequest.of(pageNo, 5);
-    return productRepository.searchProducts(keyword, pageable);
+    return productRepository.findAllByNameOrDescription(keyword, pageable);
   }
 
   @Override
@@ -125,6 +125,16 @@ public class ProductServiceImpl implements ProductService {
     } else {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with id: " + id);
     }
+  }
+
+  @Override
+  public List<Product> getAllProducts() {
+    return productRepository.getAllProducts();
+  }
+
+  @Override
+  public List<Product> listViewProduct() {
+    return productRepository.listViewProduct();
   }
 
   /**
