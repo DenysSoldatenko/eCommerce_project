@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 <!-- Basic -->
-<head>
-    <div th:replace="fragments::head"></div>
+<head th:replace="fragments::head">
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -19,7 +18,7 @@
 <div th:replace="fragments::top-search"></div>
 <!-- End Top Search -->
 <!-- Start All Title Box -->
-<div th:replace="fragments::all-title-box"></div>
+<div th:replace="fragments::slider"></div>
 <!-- End All Title Box -->
 <!-- Start Shop Page  -->
 <div class="shop-box-inner">
@@ -27,53 +26,20 @@
         <div class="row">
             <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
                 <div class="right-product-box">
-                    <div class="product-item-filter row">
-                        <div class="col-12 col-sm-8 text-center text-sm-left">
-                            <div class="toolbar-sorter-right">
-                                <span>Sort by </span>
-                                <label for="basic"></label>
-                                <select id="basic" class="selectpicker show-tick form-control"
-                                        data-placeholder="$ USD" onchange="location = this.value;">
-                                    <option>--Select--</option>
-                                    <option value="http://localhost:8889/shop/shop-detail">Normal</option>
-                                    <option value="http://localhost:8889/shop/high-price">High Price → Low Price</option>
-                                    <option value="http://localhost:8889/shop/lower-price">Low Price → High Price</option>
-                                    <option value="4">Best Selling</option>
-                                </select>
-                            </div>
-                            <p>Showing all results</p>
-                        </div>
-                        <div class="col-12 col-sm-4 text-center text-sm-right">
-                            <ul class="nav nav-tabs ml-auto">
-                                <li>
-                                    <a class="nav-link active" href="#grid-view" data-toggle="tab">
-                                        <i class="fa fa-th"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" href="#list-view" data-toggle="tab">
-                                        <i class="fa fa-list-ul"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    <div th:replace="fragments::nav-product"></div>
+                    <!--all product-->
                     <div class="product-categorie-box">
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
+                            <div role="tabpanel" class="tab-pane fade show active" id="grid-view" >
                                 <div class="row">
-                                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4"
-                                         th:each="product : ${products}">
+                                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4" th:each="product : ${products}">
                                         <div class="products-single fix">
                                             <div class="box-img-hover">
-                                                <img src="data:image/jpeg;base64," class="img-fluid"
-                                                     th:attrappend="src=${product.image}" alt="image" />
+                                                <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${product.image}" alt="image" />
                                                 <div class="mask-icon">
                                                     <ul>
                                                         <li>
-                                                            <a href="product-detail.html"
-                                                               data-toggle="tooltip"
-                                                               data-placement="right" title="View">
+                                                            <a th:href="@{/find-product/{id}(id = ${product.id})}" data-toggle="tooltip" data-placement="right" title="View">
                                                                 <i class="fas fa-eye"></i>
                                                             </a>
                                                         </li>
@@ -89,16 +55,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div role="tabpanel" class="tab-pane fade" id="list-view">
-                                <div class="list-view-box">
-                                    <div class="row" th:each="productView : ${productViews}">
+                            <!--list view-->
+                            <div role="tabpanel" class="tab-pane fade" id="list-view" >
+                                <div class="list-view-box" th:each="productView : ${viewProducts}">
+                                    <div class="row">
                                         <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
                                             <div class="products-single fix">
                                                 <div class="box-img-hover">
-                                                    <img src="data:image/jpeg;base64,"
-                                                         class="img-fluid"
-                                                         th:attrappend="src=${productView.image}"
-                                                         alt="image" />
+                                                    <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${productView.image}" alt="image" />
                                                 </div>
                                             </div>
                                         </div>
@@ -112,6 +76,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Pagination section -->
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-center">
+                                        <li th:if="${currentPage != 0}" class="page-item">
+                                            <a th:href="@{'/products/' + ${currentPage - 1}}" class="page-link" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${currentPage == i - 1 ? 'active' : ''}" class="page-item">
+                                            <a th:href="@{'/products/' + ${i - 1}}" class="page-link" th:text="${i}"></a>
+                                        </li>
+                                        <li th:if="${currentPage + 1 != totalPages}" class="page-item">
+                                            <a th:href="@{'/products/' + ${currentPage + 1}}" class="page-link" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -120,9 +104,10 @@
             <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
                 <div class="product-categori">
                     <div class="search-product">
-                        <form th:action="@{/search-product}" method="get">
-                            <input class="form-control" name="keyword" placeholder="Search here..."
-                                   type="text">
+                        <form action="#">
+                            <label>
+                                <input class="form-control" placeholder="Search here..." type="text">
+                            </label>
                             <button type="submit">
                                 <i class="fa fa-search"></i>
                             </button>
@@ -132,12 +117,9 @@
                         <div class="title-left">
                             <h3>Categories</h3>
                         </div>
-                        <div class="list-group list-group-collapse list-group-sm list-group-tree"
-                             id="list-group-men" data-children=".sub-men"
-                             th:each="categoryDto : ${categories}">
-                            <a th:href="@{/find-products/{id}(id = ${categoryDto.id})}"
-                               class="list-group-item list-group-item-action"
-                               th:text="${categoryDto.name + '(' + categoryDto.productSize + ')'}"></a>
+                        <div class="list-group list-group-collapse list-group-sm list-group-tree" id="list-group-men" data-children=".sub-men" th:each="category : ${categories}">
+                            <a th:href="@{/products-in-category/{id}(id = ${category.categoryId})}" class="list-group-item list-group-item-action">[[${category.categoryName}]] <small class="text-muted">([[${category.numberOfProduct}]])</small>
+                            </a>
                         </div>
                     </div>
                     <div class="filter-price-left">
@@ -154,6 +136,7 @@
 <!-- End Feed  -->
 <!-- Start Footer  -->
 <footer th:replace="fragments::footer"></footer>
+<!-- ALL JS FILES -->
 <div th:replace="fragments::script"></div>
 </body>
 </html>

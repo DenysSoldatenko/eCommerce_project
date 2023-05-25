@@ -127,16 +127,6 @@ public class ProductServiceImpl implements ProductService {
     }
   }
 
-  @Override
-  public List<Product> getAllProducts() {
-    return productRepository.getAllProducts();
-  }
-
-  @Override
-  public List<Product> listViewProduct() {
-    return productRepository.listViewProduct();
-  }
-
   /**
    * Sets the data from a Product entity to a ProductDto object.
    *
@@ -188,5 +178,36 @@ public class ProductServiceImpl implements ProductService {
       }
       product.setImage(Base64.getEncoder().encodeToString(imageProduct.getBytes()));
     }
+  }
+
+
+  /*Customer*/
+
+  @Override
+  public List<Product> getAllProducts() {
+    return productRepository.getAllProducts();
+  }
+
+  @Override
+  public Page<Product> listViewProducts(int pageNo) {
+    Pageable pageable = PageRequest.of(pageNo, 5);
+    return productRepository.listViewProducts(pageable);
+  }
+
+  @Override
+  public Product getProductById(Long id) {
+    return productRepository.findById(id)
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+    "Product not found with id: " + id));
+  }
+
+  @Override
+  public List<Product> getRelatedProducts(Long categoryId) {
+    return productRepository.getRelatedProducts(categoryId);
+  }
+
+  @Override
+  public List<Product> getProductsInCategory(Long categoryId) {
+    return productRepository.getProductsInCategory(categoryId);
   }
 }

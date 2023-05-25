@@ -1,5 +1,6 @@
 package com.example.library.services;
 
+import com.example.library.dtos.CategoryDto;
 import com.example.library.models.Category;
 import java.util.List;
 import java.util.Optional;
@@ -23,4 +24,7 @@ public interface CategoryService {
   void enabledById(Long id);
 
   List<Category> findAllByActivated();
+
+  /*Customer*/
+  List<CategoryDto> getCategoryAndProduct();
 }

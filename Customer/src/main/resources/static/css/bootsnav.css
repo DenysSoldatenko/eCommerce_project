@@ -144,15 +144,15 @@ nav.bootsnav.navbar-full .navbar-collapse .nav-full::-webkit-scrollbar {
     width: 0;
 }
 
-nav.bootsnav.navbar-full .navbar-collapse .nav-full::-moz-scrollbar {
+nav.bootsnav.navbar-full .navbar-collapse .nav-full {
     width: 0;
 }
 
-nav.bootsnav.navbar-full .navbar-collapse .nav-full::-ms-scrollbar {
+nav.bootsnav.navbar-full .navbar-collapse .nav-full {
     width: 0;
 }
 
-nav.bootsnav.navbar-full .navbar-collapse .nav-full::-o-scrollbar {
+nav.bootsnav.navbar-full .navbar-collapse .nav-full {
     width: 0;
 }
 
@@ -1272,8 +1272,8 @@ nav.navbar.bootsnav ul.dropdown-menu.megamenu-content .content ul.menu-col li a:
     
     /* Tabs
     =================================*/ 
-    nav.navbar.bootsnav .megamenu-content.tabbed{
-        padding-left: 0 !mportant;
+    nav.navbar.bootsnav .megamenu-content.tabbed {
+        padding-left: 0 !important;
     }
     
     nav.navbar.bootsnav .tabbed > li{
