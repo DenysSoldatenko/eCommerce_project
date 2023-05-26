@@ -40,4 +40,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       + "JOIN Category c ON c.id = p.category.id "
       + "WHERE c.id = ?1 AND p.isDeleted = false AND p.isActivated = true")
   List<Product> getProductsInCategory(Long categoryId);
+
+  @Query("SELECT p FROM Product p WHERE p.isActivated = true AND p.isDeleted = false"
+      + " ORDER BY p.costPrice DESC")
+  List<Product> filterHighPrice();
+
+  @Query("SELECT p FROM Product p WHERE p.isActivated = true AND p.isDeleted = false"
+      + " ORDER BY p.costPrice")
+  List<Product> filterLowPrice();
+
 }

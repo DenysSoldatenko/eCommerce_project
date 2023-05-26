@@ -28,7 +28,7 @@ public class ProductController {
   }
 
   @GetMapping("/products/{pageNo}")
-  public String products(Model model, @PathVariable("pageNo") int pageNo) {
+  public String getProducts(Model model, @PathVariable("pageNo") int pageNo) {
     List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
     List<Product> products = productService.getAllProducts();
     Page<Product> listViewProducts = productService.listViewProducts(pageNo);
@@ -61,5 +61,27 @@ public class ProductController {
     model.addAttribute("categories", categories);
     model.addAttribute("products", products);
     return "products-in-category";
+  }
+
+  @GetMapping("/high-price")
+  public String filterHighPrice(Model model){
+    List<Category> categories = categoryService.findAllByActivated();
+    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
+    List<Product> products = productService.filterHighPrice();
+    model.addAttribute("categoryDtoList", categoryDtoList);
+    model.addAttribute("products", products);
+    model.addAttribute("categories", categories);
+    return "filter-high-price";
+  }
+
+  @GetMapping("/low-price")
+  public String filterLowPrice(Model model){
+    List<Category> categories = categoryService.findAllByActivated();
+    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
+    List<Product> products = productService.filterLowPrice();
+    model.addAttribute("categoryDtoList", categoryDtoList);
+    model.addAttribute("products", products);
+    model.addAttribute("categories", categories);
+    return "filter-low-price";
   }
 }
