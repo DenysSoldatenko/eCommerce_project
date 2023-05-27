@@ -6,10 +6,13 @@ import com.example.library.repositories.ProductRepository;
 import com.example.library.services.ProductService;
 import com.example.library.utils.ImageUpload;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.modelmapper.Conditions;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,39 +31,44 @@ public class ProductServiceImpl implements ProductService {
 
   private final ImageUpload imageUpload;
 
+  private final ModelMapper modelMapper;
+
+  /**
+   * Constructs a new ProductServiceImpl with the specified dependencies.
+   *
+   * @param productRepository the ProductRepository to be used for data access
+   * @param imageUpload       the ImageUpload utility for handling image uploads
+   * @param modelMapper       the ModelMapper for object mapping
+   */
+
   @Autowired
-  public ProductServiceImpl(ProductRepository productRepository, ImageUpload imageUpload) {
+  public ProductServiceImpl(ProductRepository productRepository,
+                            ImageUpload imageUpload, ModelMapper modelMapper) {
     this.productRepository = productRepository;
     this.imageUpload = imageUpload;
+    this.modelMapper = modelMapper;
   }
 
   @Override
   public List<ProductDto> findAll() {
-    List<ProductDto> productDtoList = new ArrayList<>();
     List<Product> products = productRepository.findAll();
-    for (Product product : products) {
-      ProductDto productDto = new ProductDto();
-      setProductDtoData(product, productDto);
-      productDtoList.add(productDto);
-    }
-    return productDtoList;
+
+    return products.stream()
+    .map(product -> modelMapper.map(product, ProductDto.class))
+    .collect(Collectors.toList());
   }
 
   @Override
   public Product save(MultipartFile imageProduct, ProductDto productDto) {
     Product product = new Product();
+
     try {
       handleImageOnCreate(product, imageProduct);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    product.setName(productDto.getName());
-    product.setDescription(productDto.getDescription());
-    product.setCategory(productDto.getCategory());
-    product.setCostPrice(productDto.getCostPrice());
-    product.setCurrentQuantity(productDto.getCurrentQuantity());
-    product.setActivated(true);
-    product.setDeleted(false);
+
+    mapProductDtoToProduct(productDto, product);
     return productRepository.save(product);
   }
 
@@ -69,17 +77,14 @@ public class ProductServiceImpl implements ProductService {
     Product product = productRepository.findById(productDto.getId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
         "Product not found with id: " + productDto.getId()));
+
     try {
       handleImageOnUpdate(product, imageProduct);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    product.setName(productDto.getName());
-    product.setDescription(productDto.getDescription());
-    product.setSalePrice(productDto.getSalePrice());
-    product.setCostPrice(productDto.getCostPrice());
-    product.setCurrentQuantity(productDto.getCurrentQuantity());
-    product.setCategory(productDto.getCategory());
+
+    mapProductDtoToProduct(productDto, product);
     return productRepository.save(product);
   }
 
@@ -118,32 +123,12 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ProductDto getById(Long id) {
     Optional<Product> product = productRepository.findById(id);
+
     if (product.isPresent()) {
-      ProductDto productDto = new ProductDto();
-      setProductDtoData(product.get(), productDto);
-      return productDto;
+      return modelMapper.map(product.get(), ProductDto.class);
     } else {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with id: " + id);
     }
-  }
-
-  /**
-   * Sets the data from a Product entity to a ProductDto object.
-   *
-   * @param product    the Product entity
-   * @param productDto the ProductDto object
-   */
-  public void setProductDtoData(Product product, ProductDto productDto) {
-    productDto.setId(product.getId());
-    productDto.setName(product.getName());
-    productDto.setDescription(product.getDescription());
-    productDto.setCurrentQuantity(product.getCurrentQuantity());
-    productDto.setCategory(product.getCategory());
-    productDto.setSalePrice(product.getSalePrice());
-    productDto.setCostPrice(product.getCostPrice());
-    productDto.setImage(product.getImage());
-    productDto.setDeleted(product.isDeleted());
-    productDto.setActivated(product.isActivated());
   }
 
   /**
@@ -178,6 +163,19 @@ public class ProductServiceImpl implements ProductService {
       }
       product.setImage(Base64.getEncoder().encodeToString(imageProduct.getBytes()));
     }
+  }
+
+  private void mapProductDtoToProduct(ProductDto productDto, Product product) {
+    modelMapper.getConfiguration()
+      .setPropertyCondition(Conditions.isNotNull())
+      .setMatchingStrategy(MatchingStrategies.STANDARD)
+      .setFieldMatchingEnabled(true)
+        .setSkipNullEnabled(true);
+
+    product.setActivated(true);
+    product.setDeleted(false);
+
+    modelMapper.map(productDto, product);
   }
 
 

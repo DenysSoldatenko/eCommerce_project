@@ -44,9 +44,9 @@
                 <div class="login-box">
                     <select id="" class="selectpicker show-tick form-control" data-placeholder="Sign In" onchange="location = this.value;">
                         <option th:text="${session.username != null} ? ${session.username} : 'Authentication'"></option>
-                        <option th:if="${session.username == null}" value="http://localhost:8020/shop/login">Sign In</option>
-                        <option th:if="${session.username != null}" value="http://localhost:8020/shop/logout">Log out</option>
-                        <option value="http://localhost:8020/shop/register">Sign Up</option>
+                        <option th:if="${session.username == null}" value="http://localhost:8080/shop/login">Log In</option>
+                        <option th:if="${session.username != null}" value="http://localhost:8080/shop/logout">Log out</option>
+                        <option th:if="${session.username == null}" value="http://localhost:8080/shop/register">Sign Up</option>
                     </select>
                 </div>
                 <div class="text-slid-box">
@@ -132,7 +132,7 @@
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
-            <!-- Start Atribute Navigation -->
+            <!-- Start Attribute Navigation -->
             <div class="attr-nav">
                 <ul>
                     <li class="search">
@@ -149,7 +149,7 @@
                     </li>
                 </ul>
             </div>
-            <!-- End Atribute Navigation -->
+            <!-- End Attribute Navigation -->
         </div>
         <!-- Start Side Menu -->
         <div class="side">

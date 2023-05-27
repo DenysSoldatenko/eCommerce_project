@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Controller class for handling login, registration, and other related actions.
  */
 @Controller
-public class LoginController {
+public class AuthController {
   private final AdminDtoExceptionManager adminDtoExceptionManager;
   private final AdminServiceImpl adminService;
   private final BCryptPasswordEncoder passwordEncoder;
@@ -34,9 +34,9 @@ public class LoginController {
    * @param passwordEncoder   the BCryptPasswordEncoder for encoding passwords
    */
   @Autowired
-  public LoginController(AdminDtoExceptionManager adminDtoExceptionManager,
-                         AdminServiceImpl adminService,
-                         BCryptPasswordEncoder passwordEncoder) {
+  public AuthController(AdminDtoExceptionManager adminDtoExceptionManager,
+                        AdminServiceImpl adminService,
+                        BCryptPasswordEncoder passwordEncoder) {
     this.adminDtoExceptionManager = adminDtoExceptionManager;
     this.adminService = adminService;
     this.passwordEncoder = passwordEncoder;
