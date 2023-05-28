@@ -15,12 +15,17 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Represents a shopping cart in the project.
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "shopping_carts")
 public class ShoppingCart {
@@ -38,15 +43,4 @@ public class ShoppingCart {
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
   private Set<CartItem> cartItems;
-
-  /**
-   * Constructs a new ShoppingCart.
-   * Initializes the cart with an empty set of cart items,
-   * total items count, and total price.
-   */
-  public ShoppingCart() {
-    this.cartItems = new HashSet<>();
-    this.totalItems = 0;
-    this.totalPrice = 0.0;
-  }
 }
