@@ -7,12 +7,15 @@ import com.example.library.models.ShoppingCart;
 import com.example.library.repositories.CartItemRepository;
 import com.example.library.repositories.ShoppingCartRepository;
 import com.example.library.services.ShoppingCartService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of the ShoppingCartService interface.
+ */
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
   private final CartItemRepository itemRepository;
@@ -40,6 +43,44 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     double totalPrice = calculateTotalPrice(cart.getCartItems());
 
     updateShoppingCart(cart, totalItems, totalPrice);
+  }
+
+  @Override
+  public ShoppingCart updateItemInCart(Product product, int quantity, Customer customer) {
+    ShoppingCart cart = customer.getCart();
+    Set<CartItem> cartItems = cart.getCartItems();
+    CartItem item = findCartItem(cartItems, product.getId());
+
+    item.setQuantity(quantity);
+    item.setTotalPrice(quantity * product.getCostPrice());
+    itemRepository.save(item);
+
+    int totalItems = calculateTotalItems(cartItems);
+    double totalPrice = calculateTotalPrice(cartItems);
+
+    cart.setTotalItems(totalItems);
+    cart.setTotalPrice(totalPrice);
+
+    return cartRepository.save(cart);
+  }
+
+  @Override
+  public ShoppingCart deleteItemFromCart(Product product, Customer customer) {
+    ShoppingCart cart = customer.getCart();
+    Set<CartItem> cartItems = cart.getCartItems();
+    CartItem item = findCartItem(cartItems, product.getId());
+
+    cartItems.remove(item);
+    itemRepository.delete(item);
+
+    int totalItems = calculateTotalItems(cartItems);
+    double totalPrice = calculateTotalPrice(cartItems);
+
+    cart.setCartItems(cartItems);
+    cart.setTotalItems(totalItems);
+    cart.setTotalPrice(totalPrice);
+
+    return cartRepository.save(cart);
   }
 
   private ShoppingCart getOrCreateShoppingCart(Customer customer) {
