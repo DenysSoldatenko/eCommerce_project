@@ -7,7 +7,9 @@ import com.example.library.services.CustomerService;
 import com.example.library.services.ProductService;
 import com.example.library.services.ShoppingCartService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,11 +48,12 @@ public class CartController {
    *
    * @param model     the model to be populated with attributes
    * @param principal the principal object representing the authenticated user
+   * @param session   the HttpSession object for storing session data
    * @return the view name for displaying the shopping cart
    *         or a redirect to the login page if not authenticated
    */
   @GetMapping("/cart")
-  public String cart(Model model, Principal principal) {
+  public String cart(Model model, Principal principal, HttpSession session) {
     if (principal == null) {
       return "redirect:/login";
     }
@@ -61,6 +64,10 @@ public class CartController {
     if (shoppingCart == null) {
       model.addAttribute("check", "No items in your cart");
     }
+    session.setAttribute("totalItems", Optional.ofNullable(shoppingCart)
+        .map(ShoppingCart::getTotalItems).orElse(0));
+    model.addAttribute("subTotal", Optional.ofNullable(shoppingCart)
+        .map(ShoppingCart::getTotalPrice).orElse(0.00));
     model.addAttribute("shoppingCart", shoppingCart);
     return "cart";
   }
