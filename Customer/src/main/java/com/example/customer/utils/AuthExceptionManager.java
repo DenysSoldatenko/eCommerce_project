@@ -9,15 +9,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 /**
- * Utility class for handling exceptions related to the Customer DTO.
+ * Utility class for handling exceptions related to the authentication process.
  */
 @Component
-public class CustomerDtoExceptionManager {
+public class AuthExceptionManager {
 
   private final CustomerServiceImpl customerService;
 
   @Autowired
-  public CustomerDtoExceptionManager(CustomerServiceImpl customerService) {
+  public AuthExceptionManager(CustomerServiceImpl customerService) {
     this.customerService = customerService;
   }
 
@@ -41,21 +41,22 @@ public class CustomerDtoExceptionManager {
    * @param result      the BindingResult object containing validation errors
    * @param model       the model to be populated with attributes
    */
-  public void handleException(CustomerDto customerDto, BindingResult result, Model model) {
+  private void handleException(CustomerDto customerDto, BindingResult result, Model model) {
     if (result.hasErrors()) {
       model.addAttribute("customerDto", customerDto);
     }
   }
 
-  /**
-   * Handles the validation of the email in the CustomerDto.
-   * Checks if the email is already registered.
-   *
-   * @param customerDto the CustomerDto containing the email to validate
-   * @param model       the model to be populated with attributes
-   */
-  public void handleEmail(CustomerDto customerDto, Model model) {
-    Customer customer = customerService.findByUsername(customerDto.getUsername());
+  private void handleEmail(CustomerDto customerDto, Model model) {
+    String emailPattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    String username = customerDto.getUsername();
+
+    if (!username.matches(emailPattern)) {
+      model.addAttribute("emailError", "Invalid email format!");
+      model.addAttribute("customerDto", customerDto);
+    }
+
+    Customer customer = customerService.findByUsername(username);
     if (customer != null) {
       model.addAttribute("emailError", "Your email has been registered!");
       model.addAttribute("customerDto", customerDto);
@@ -69,7 +70,7 @@ public class CustomerDtoExceptionManager {
    * @param customerDto the CustomerDto containing the password to validate
    * @param model       the model to be populated with attributes
    */
-  public void handlePassword(CustomerDto customerDto, Model model) {
+  private void handlePassword(CustomerDto customerDto, Model model) {
     if (!customerDto.getPassword().equals(customerDto.getRepeatPassword())) {
       model.addAttribute("passwordError", "Your password may be wrong! Check again!");
       model.addAttribute("customerDto", customerDto);

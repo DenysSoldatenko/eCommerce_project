@@ -44,12 +44,6 @@ public class Customer {
   private String phoneNumber;
   private String address;
 
-  @OneToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "name", referencedColumnName = "id")
-  private City city;
-
-  private String country;
-
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(name = "customer_role",
       joinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "customer_id"),

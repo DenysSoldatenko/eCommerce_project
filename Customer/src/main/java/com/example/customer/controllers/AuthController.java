@@ -1,6 +1,6 @@
 package com.example.customer.controllers;
 
-import com.example.customer.utils.CustomerDtoExceptionManager;
+import com.example.customer.utils.AuthExceptionManager;
 import com.example.library.dtos.CustomerDto;
 import com.example.library.services.CustomerService;
 import jakarta.validation.Valid;
@@ -25,22 +25,22 @@ public class AuthController {
 
   private final BCryptPasswordEncoder passwordEncoder;
 
-  private final CustomerDtoExceptionManager customerDtoExceptionManager;
+  private final AuthExceptionManager authExceptionManager;
 
   /**
    * Constructs an AuthController with the specified dependencies.
    *
    * @param customerService             the CustomerService implementation
    * @param passwordEncoder             the BCryptPasswordEncoder for password encoding
-   * @param customerDtoExceptionManager the CustomerDtoExceptionManager for exception handling
+   * @param authExceptionManager the CustomerDtoExceptionManager for exception handling
    */
   @Autowired
   public AuthController(CustomerService customerService,
                         BCryptPasswordEncoder passwordEncoder,
-                        CustomerDtoExceptionManager customerDtoExceptionManager) {
+                        AuthExceptionManager authExceptionManager) {
     this.customerService = customerService;
     this.passwordEncoder = passwordEncoder;
-    this.customerDtoExceptionManager = customerDtoExceptionManager;
+    this.authExceptionManager = authExceptionManager;
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -66,7 +66,7 @@ public class AuthController {
   public String processRegister(@Valid @ModelAttribute("customerDto") CustomerDto customerDto,
       BindingResult result, Model model) {
 
-    customerDtoExceptionManager.validate(customerDto, result, model);
+    authExceptionManager.validate(customerDto, result, model);
 
     try {
       if (result.hasErrors() || model.containsAttribute("emailError")

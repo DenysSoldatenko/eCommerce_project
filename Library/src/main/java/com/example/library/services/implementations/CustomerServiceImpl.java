@@ -54,8 +54,6 @@ public class CustomerServiceImpl implements CustomerService {
   public Customer saveInfo(Customer c) {
     Customer customer = customerRepository.findByUsername(c.getUsername());
     customer.setAddress(c.getAddress());
-    customer.setCity(c.getCity());
-    customer.setCountry(c.getCountry());
     customer.setPhoneNumber(c.getPhoneNumber());
     return customerRepository.save(customer);
   }

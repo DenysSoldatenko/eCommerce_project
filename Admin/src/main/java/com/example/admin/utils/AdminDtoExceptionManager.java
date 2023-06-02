@@ -43,7 +43,7 @@ public class AdminDtoExceptionManager {
    * @param result    the BindingResult object for validation result
    * @param model     the model object to add the adminDto attribute
    */
-  public void handleException(AdminDto adminDto, BindingResult result, Model model) {
+  private void handleException(AdminDto adminDto, BindingResult result, Model model) {
     if (result.hasErrors()) {
       model.addAttribute("adminDto", adminDto);
       System.out.println(result);
@@ -57,7 +57,7 @@ public class AdminDtoExceptionManager {
    * @param adminDto  the AdminDto object to check for email validation
    * @param model     the model object to add the error attributes
    */
-  public void handleEmail(AdminDto adminDto, Model model) {
+  private void handleEmail(AdminDto adminDto, Model model) {
     String username = adminDto.getUsername();
     Optional<Admin> admin = Optional.ofNullable(adminService.findByUsername(username));
 
@@ -74,7 +74,7 @@ public class AdminDtoExceptionManager {
    * @param adminDto  the AdminDto object to check for password validation
    * @param model     the model object to add the error attribute
    */
-  public void handlePassword(AdminDto adminDto, Model model) {
+  private void handlePassword(AdminDto adminDto, Model model) {
     if (!adminDto.getPassword().equals(adminDto.getRepeatPassword())) {
       model.addAttribute("adminDto", adminDto);
       model.addAttribute("passwordError", "Your password may be wrong! Check again!");

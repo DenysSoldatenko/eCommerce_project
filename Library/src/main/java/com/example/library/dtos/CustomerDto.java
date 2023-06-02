@@ -1,5 +1,6 @@
 package com.example.library.dtos;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class CustomerDto {
       message = "Invalid last name! (should not contain numbers)")
   private String lastName;
 
+  @Email
   private String username;
 
   @Size(min = 5, max = 20, message = "Password should have 5-20 characters")
