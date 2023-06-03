@@ -10,6 +10,8 @@ import com.example.library.models.ShoppingCart;
 public interface ShoppingCartService {
   void addItemToCart(Product product, int quantity, Customer customer);
 
+  void deleteCartById(Long id);
+
   ShoppingCart updateItemInCart(Product product, int quantity, Customer customer);
 
   ShoppingCart deleteItemFromCart(Product product, Customer customer);

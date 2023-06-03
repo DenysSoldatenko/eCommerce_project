@@ -64,7 +64,7 @@ public class ProductController {
     List<Product> products = productService.getRelatedProducts(categoryId);
     model.addAttribute("product", product);
     model.addAttribute("products", products);
-    return "product-detail";
+    return "find-product";
   }
 
   /**

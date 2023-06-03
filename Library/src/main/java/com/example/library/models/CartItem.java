@@ -1,5 +1,6 @@
 package com.example.library.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,11 +32,11 @@ public class CartItem {
   private int quantity;
   private double totalPrice;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinColumn(name = "shopping_cart_id", referencedColumnName = "shopping_cart_id")
   private ShoppingCart cart;
 
-  @OneToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "product_id", referencedColumnName = "product_id")
   private Product product;
 }

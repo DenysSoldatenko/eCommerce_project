@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Data Transfer Object (DTO) class for representing cart item information.
+ */
 @Getter
 @Setter
 @AllArgsConstructor

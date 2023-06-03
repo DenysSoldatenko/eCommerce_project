@@ -1,5 +1,6 @@
 package com.example.library.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,9 +31,8 @@ public class OrderDetail {
 
   private int quantity;
   private double totalPrice;
-  private double unitPrice;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @JoinColumn(name = "order_id", referencedColumnName = "order_id")
   private Order order;
 

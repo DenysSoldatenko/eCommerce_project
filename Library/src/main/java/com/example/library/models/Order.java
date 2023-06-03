@@ -42,9 +42,10 @@ public class Order {
   private Date deliveryDate;
 
   private double totalPrice;
-  private double shippingFee;
-  private String orderStatus;
-  private String notes;
+  private double tax;
+  private int quantity;
+  private String paymentMethod;
+  private boolean isAccept;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")

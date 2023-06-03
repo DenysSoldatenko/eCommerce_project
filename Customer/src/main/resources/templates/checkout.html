@@ -1,41 +1,34 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 <!-- Basic -->
-
 <head th:replace="fragments::head">
-    <title>Order</title></head>
+    <title>Order</title>
+</head>
 <body>
 <!-- Start Main Top -->
-<div th:replace="fragments::main-top">
-</div>
+<div th:replace="fragments::main-top"></div>
 <!-- End Main Top -->
-
-
 <!-- Start Main Top -->
-<header th:replace="fragments::main-header">
-</header>
+<header th:replace="fragments::main-header"></header>
 <!-- End Main Top -->
-
 <!-- Start Top Search -->
-<div th:replace="fragments::top-search">
-</div>
+<div th:replace="fragments::top-search"></div>
 <!-- End Top Search -->
-
 <!-- Start All Title Box -->
-<div th:replace="fragments::slider">
-</div>
+<div th:replace="fragments::slider"></div>
 <!-- End All Title Box -->
-
 <!-- Start Cart  -->
-<div class="cart-box-main" >
+<div class="cart-box-main">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-            <div th:if="${cart.cartItems.isEmpty()}" class="text-center alert-warning">
-                <p>No items in your cart!</p>
+                <div th:if="${cart == null or cart.cartItems == null or cart.cartItems.isEmpty()}"
+                     class="text-center alert-warning">
+                    <p>No items in your cart!</p>
+                </div>
             </div>
-            </div>
-            <div class="col-sm-6 col-lg-6 mb-3" th:if="${!cart.cartItems.isEmpty()}" >
+            <div class="col-sm-6 col-lg-6 mb-3"
+                 th:if="${!(cart == null) and !(cart.cartItems == null) and !(cart.cartItems.isEmpty())}">
                 <div class="checkout-address">
                     <div class="title-left">
                         <h3>Billing address</h3>
@@ -52,44 +45,42 @@
                         <label for="address">Address: </label>
                         <p th:text="${customer.address}" id="address">
                     </div>
-                    <hr class="mb-4">
-                    <hr class="mb-4">
-                    <div class="title"><span>Payment Methods: </span></div>
-                    <div class="d-block my-3">
-                        <div class="custom-control custom-radio">
-                            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-                            <label class="custom-control-label" for="debit">Cash</label>
-                        </div>
+                    <div class="mb-3">
+                        <label for="address">Payment Method: </label>
+                        <p>Cash</p>
                     </div>
-                    <hr class="mb-1">
                 </div>
             </div>
-
-            <div class="col-sm-6 col-lg-6 mb-3" th:if="${!cart.cartItems.isEmpty()}">
+            <div class="col-sm-6 col-lg-6 mb-3"
+                 th:if="${!(cart == null) and !(cart.cartItems == null) and !(cart.cartItems.isEmpty())}">
                 <div class="col-md-12 col-lg-12">
                     <div class="odr-box">
                         <div class="title-left">
                             <h3>Shopping cart</h3>
                         </div>
                         <div class="rounded p-2 bg-light">
-                            <div class="media mb-2 border-bottom" th:each="item : ${cart.cartItems}">
-                                <div class="media-body"><a href="product-detail.html" th:text="${item.product.name}"> </a>
+                            <div class="media mb-2 border-bottom"
+                                 th:each="item : ${cart.cartItems}">
+                                <div class="media-body">
+                                    <a href="find-product.html"
+                                       th:text="${item.product.name}"></a>
                                     <div class="small text-muted">
                                         Price: $[[${item.product.costPrice}]] <span class="mx-2">|</span>
                                         Quantity: [[${item.quantity}]] <span class="mx-2">|</span>
-                                        Full price:
-                                        $[[${item.quantity * item.product.costPrice}]] <span class="mx-2">|</span>
+                                        Full price: $[[${item.quantity * item.product.costPrice}]]
+                                        <span class="mx-2">|</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-12 col-lg-12">
                     <div class="order-box">
                         <div class="title-left">
-                            <h2><b>Your order</b></h2>
+                            <h2>
+                                <b>Your order</b>
+                            </h2>
                         </div>
                         <div class="d-flex">
                             <div class="font-weight-bold">Product</div>
@@ -121,24 +112,20 @@
                         <hr>
                     </div>
                 </div>
-                <div class="col-12 d-flex shopping-box"><a th:href="@{/order}" class="ml-auto btn hvr-hover">Place Order</a></div>
+                <div class="col-12 d-flex shopping-box">
+                    <a th:href="@{/save-order}" class="ml-auto btn hvr-hover">Place Order</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- End Cart -->
-
 <!-- Start Feed  -->
 <div th:replace="fragments::instagram-box"></div>
-
 <!-- End Feed  -->
-
-
 <!-- Start Footer  -->
 <footer th:replace="fragments::footer"></footer>
-
 <!-- ALL JS FILES -->
 <div th:replace="fragments::script"></div>
 </body>
-
 </html>

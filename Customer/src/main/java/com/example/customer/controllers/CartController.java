@@ -64,10 +64,12 @@ public class CartController {
     if (shoppingCart == null || shoppingCart.getCartItems().isEmpty()) {
       model.addAttribute("check", "No items in your cart");
     }
+
     session.setAttribute("totalItems", Optional.ofNullable(shoppingCart)
         .map(ShoppingCart::getTotalItems).orElse(0));
     model.addAttribute("subTotal", Optional.ofNullable(shoppingCart)
         .map(ShoppingCart::getTotalPrice).orElse(0.00));
+
     model.addAttribute("shoppingCart", shoppingCart);
     return "cart";
   }

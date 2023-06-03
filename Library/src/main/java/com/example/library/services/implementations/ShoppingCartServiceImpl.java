@@ -11,7 +11,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Implementation of the ShoppingCartService interface.
@@ -43,6 +45,22 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     double totalPrice = calculateTotalPrice(cart.getCartItems());
 
     updateShoppingCart(cart, totalItems, totalPrice);
+  }
+
+  @Override
+  public void deleteCartById(Long id) {
+    ShoppingCart shoppingCart = cartRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+        "Cart not found with id: " + id));
+
+    for (CartItem cartItem : shoppingCart.getCartItems()) {
+      itemRepository.deleteById(cartItem.getId());
+    }
+    shoppingCart.setCustomer(null);
+    shoppingCart.getCartItems().clear();
+    shoppingCart.setTotalPrice(0);
+    shoppingCart.setTotalItems(0);
+    cartRepository.save(shoppingCart);
   }
 
   @Override
