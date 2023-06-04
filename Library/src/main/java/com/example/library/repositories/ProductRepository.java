@@ -48,4 +48,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       + " ORDER BY p.costPrice")
   List<Product> filterLowPrice();
 
+  @Query("SELECT p FROM Product p WHERE p.name LIKE %?1% OR p.description LIKE %?1%")
+  List<Product> searchProducts(String keyword);
 }

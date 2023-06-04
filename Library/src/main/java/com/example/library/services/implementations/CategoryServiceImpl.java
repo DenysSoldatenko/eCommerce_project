@@ -2,9 +2,12 @@ package com.example.library.services.implementations;
 
 import com.example.library.dtos.CategoryDto;
 import com.example.library.models.Category;
+import com.example.library.models.Product;
 import com.example.library.repositories.CategoryRepository;
 import com.example.library.services.CategoryService;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,4 +86,17 @@ public class CategoryServiceImpl implements CategoryService {
     return categoryRepository.getCategoryAndProduct();
   }
 
+  @Override
+  public List<Category> getFilteredCategories(List<Product> filteredProducts) {
+    List<Category> filteredCategories = new ArrayList<>();
+    for (Category category : categoryRepository.findAllByActivated()) {
+      for (Product product : filteredProducts) {
+        if (Objects.equals(product.getCategory().getId(), category.getId())) {
+          filteredCategories.add(category);
+          break;
+        }
+      }
+    }
+    return filteredCategories;
+  }
 }

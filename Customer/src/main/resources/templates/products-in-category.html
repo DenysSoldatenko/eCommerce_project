@@ -63,7 +63,28 @@
                           </a>
                         </li>
                       </ul>
-                      <a class="cart" href="#">Add to Cart</a>
+                      <form th:action="@{/add-to-cart}" method="post">
+                        <div class="products-single fix">
+                          <div class="box-img-hover">
+                            <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${product.image}" alt="image" />
+                            <div class="mask-icon">
+                              <ul>
+                                <li>
+                                  <a th:href="@{/find-product/{id}(id = ${product.id})}" data-toggle="tooltip" data-placement="right" title="View">
+                                    <i class="fas fa-eye"></i>
+                                  </a>
+                                </li>
+                              </ul>
+                              <input type="hidden" th:value="${product.id}" name="id">
+                              <input type="submit" class="cart" value="Add to Cart">
+                            </div>
+                          </div>
+                          <div class="why-text">
+                            <h4 th:text="${product.name}">Almond-Topped Fish</h4>
+                            <h5 th:text="'$' + ${product.costPrice}"> $36.00</h5>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
                   <div class="why-text">
@@ -80,9 +101,7 @@
         <div class="product-categori">
           <div class="search-product">
             <form action="#">
-              <label>
-                <input class="form-control" placeholder="Search here..." type="text">
-              </label>
+              <input class="form-control" placeholder="Search here..." type="text">
               <button type="submit">
                 <i class="fa fa-search"></i>
               </button>

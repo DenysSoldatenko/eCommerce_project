@@ -27,6 +27,13 @@ public class OrderServiceImpl implements OrderService {
   private final OrderDetailRepository detailRepository;
   private final ShoppingCartService cartService;
 
+  /**
+   * Constructs a new OrderServiceImpl with the provided dependencies.
+   *
+   * @param orderRepository   the OrderRepository for accessing order-related data
+   * @param detailRepository  the OrderDetailRepository for accessing order detail data
+   * @param cartService       the ShoppingCartService for handling shopping cart operations
+   */
   @Autowired
   public OrderServiceImpl(OrderRepository orderRepository, OrderDetailRepository detailRepository,
       ShoppingCartService cartService) {

@@ -49,37 +49,42 @@
               </div>
             </div>
             <div class="row special-list">
-              <!--<div class="col-lg-3 col-md-6 special-grid best-seller" >
-                  <div class="products-single fix">
-                      <div class="box-img-hover">
-                          <img src="" alt="Image">
-                          <div class="mask-icon">
-                              <ul>
-                                  <li><a href="find-product.html" data-toggle="tooltip" data-placement="right"
-                                         title="View"><i class="fas fa-eye"></i></a></li>
-                              </ul>
-                              <a class="cart" href="#">Add to Cart</a>
-                          </div>
-                      </div>
-                      <div class="why-text">
-                          <h4 ></h4>
-                          <h5 > </h5>
-                      </div>
-                  </div>
-              </div>-->
-              <div class="col-lg-3 col-md-6 special-grid" th:each="product : ${products}" th:if="${product.category.id == category.id}">
+              <div class="col-lg-3 col-md-6 special-grid"
+                   th:each="product : ${products}" th:if="${product.category.id == category.id}">
                 <div class="products-single fix">
                   <div class="box-img-hover">
                     <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${product.image}" alt="image" />
                     <div class="mask-icon">
                       <ul>
                         <li>
-                          <a th:href="@{/find-product/{id}(id = ${product.id})}" data-toggle="tooltip" data-placement="right" title="View">
+                          <a th:href="@{/find-product/{id}(id = ${product.id})}"
+                             data-toggle="tooltip" data-placement="right" title="View">
                             <i class="fas fa-eye"></i>
                           </a>
                         </li>
                       </ul>
-                      <a class="cart" href="#">Add to Cart</a>
+                      <form th:action="@{/add-to-cart}" method="post">
+                        <div class="products-single fix">
+                          <div class="box-img-hover">
+                            <img src="data:image/jpeg;base64," class="img-fluid" th:attrappend="src=${product.image}" alt="image" />
+                            <div class="mask-icon">
+                              <ul>
+                                <li>
+                                  <a th:href="@{/find-product/{id}(id = ${product.id})}" data-toggle="tooltip" data-placement="right" title="View">
+                                    <i class="fas fa-eye"></i>
+                                  </a>
+                                </li>
+                              </ul>
+                              <input type="hidden" th:value="${product.id}" name="id">
+                              <input type="submit" class="cart" value="Add to Cart">
+                            </div>
+                          </div>
+                          <div class="why-text">
+                            <h4 th:text="${product.name}">Almond-Topped Fish</h4>
+                            <h5 th:text="'$' + ${product.costPrice}"> $36.00</h5>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
                   <div class="why-text">
@@ -106,8 +111,11 @@
             <div class="title-left">
               <h3>Categories</h3>
             </div>
-            <div class="list-group list-group-collapse list-group-sm list-group-tree" id="list-group-men" data-children=".sub-men" th:each="categoryDto : ${categoryDtoList}">
-              <a th:href="@{/products-in-category/{id}(id = ${categoryDto.categoryId})}" class="list-group-item list-group-item-action">[[${categoryDto.categoryName}]] <small class="text-muted">([[${categoryDto.numberOfProduct}]])</small>
+            <div class="list-group list-group-collapse list-group-sm list-group-tree"
+                 id="list-group-men" data-children=".sub-men" th:each="categoryDto : ${categoryDtoList}">
+              <a th:href="@{/products-in-category/{id}(id = ${categoryDto.categoryId})}"
+                 class="list-group-item list-group-item-action">[[${categoryDto.categoryName}]]
+                <small class="text-muted">([[${categoryDto.numberOfProduct}]])</small>
               </a>
             </div>
           </div>

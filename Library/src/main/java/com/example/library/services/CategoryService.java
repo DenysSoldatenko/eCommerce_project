@@ -2,6 +2,7 @@ package com.example.library.services;
 
 import com.example.library.dtos.CategoryDto;
 import com.example.library.models.Category;
+import com.example.library.models.Product;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,6 @@ public interface CategoryService {
 
   /*Customer*/
   List<CategoryDto> getCategoryAndProduct();
+
+  List<Category> getFilteredCategories(List<Product> filteredProducts);
 }

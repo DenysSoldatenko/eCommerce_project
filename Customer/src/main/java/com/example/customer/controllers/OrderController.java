@@ -4,11 +4,9 @@ import com.example.library.models.Customer;
 import com.example.library.models.Order;
 import com.example.library.models.ShoppingCart;
 import com.example.library.services.CustomerService;
+import com.example.library.services.OrderService;
 import java.security.Principal;
 import java.util.List;
-
-import com.example.library.services.OrderService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,6 +55,15 @@ public class OrderController {
     return "checkout";
   }
 
+
+  /**
+   * Retrieves the list of orders for the authenticated user.
+   *
+   * @param model     the model to be populated with attributes
+   * @param principal the Principal object representing the currently authenticated user
+   * @return the view displaying the list of orders for the user
+   *         or a redirect to the login page if not authenticated
+   */
   @GetMapping("/orders")
   public String getOrders(Model model, Principal principal) {
     if (principal == null) {
@@ -71,6 +78,13 @@ public class OrderController {
     }
   }
 
+  /**
+   * Saves the current shopping cart as an order for the authenticated user.
+   *
+   * @param principal the Principal object representing the currently authenticated user
+   * @return a redirect to the list of orders for the user
+   *         or a redirect to the login page if not authenticated
+   */
   @GetMapping("/save-order")
   public String saveOrder(Principal principal) {
     if (principal == null) {
@@ -83,6 +97,13 @@ public class OrderController {
     }
   }
 
+  /**
+   * Cancels an order with the specified ID.
+   *
+   * @param id         the ID of the order to be canceled
+   * @param attributes the RedirectAttributes object to add flash attributes for the view
+   * @return a redirect to the list of orders for the user with a success message
+   */
   @PostMapping("/cancel-order/{id}")
   public String cancelOrder(@PathVariable("id") Long id, RedirectAttributes attributes) {
     orderService.cancelOrder(id);

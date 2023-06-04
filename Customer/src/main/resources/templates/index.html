@@ -45,24 +45,6 @@
             </div>
         </div>
         <div class="row special-list">
-            <!--<div class="col-lg-3 col-md-6 special-grid best-seller" >
-                <div class="products-single fix">
-                    <div class="box-img-hover">
-                        <img src="" alt="Image">
-                        <div class="mask-icon">
-                            <ul>
-                                <li><a href="find-product.html" data-toggle="tooltip" data-placement="right"
-                                       title="View"><i class="fas fa-eye"></i></a></li>
-                            </ul>
-                            <a class="cart" href="#">Add to Cart</a>
-                        </div>
-                    </div>
-                    <div class="why-text">
-                        <h4 ></h4>
-                        <h5 > </h5>
-                    </div>
-                </div>
-            </div>-->
             <div class="col-lg-3 col-md-6 special-grid" th:each="product : ${products}" th:if="${product.category.name == category.name} ">
                 <form th:action="@{/add-to-cart}" method="post">
                     <div class="products-single fix">
