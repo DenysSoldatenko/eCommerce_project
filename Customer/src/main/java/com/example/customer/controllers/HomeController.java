@@ -24,6 +24,13 @@ public class HomeController {
 
   private final SessionAttributeSetter sessionAttributeSetter;
 
+  /**
+   * Constructs a new HomeController with the specified dependencies.
+   *
+   * @param productService         the ProductService to handle product-related operations
+   * @param categoryService        the CategoryService to handle category-related operations
+   * @param sessionAttributeSetter the SessionAttributeSetter to set session attributes
+   */
   @Autowired
   public HomeController(ProductService productService, CategoryService categoryService,
                         SessionAttributeSetter sessionAttributeSetter) {

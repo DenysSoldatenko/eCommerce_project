@@ -6,6 +6,8 @@ import com.example.library.models.ShoppingCart;
 import com.example.library.services.CustomerService;
 import com.example.library.services.OrderService;
 import java.security.Principal;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,7 +73,9 @@ public class OrderController {
     } else {
       Customer customer = customerService.findByUsername(principal.getName());
       List<Order> orderList = customer.getOrders();
+      Timestamp currentTime =  new Timestamp(new Date().getTime());
       model.addAttribute("orders", orderList);
+      model.addAttribute("currentTime", currentTime);
       model.addAttribute("title", "Order");
       model.addAttribute("page", "Order");
       return "order";

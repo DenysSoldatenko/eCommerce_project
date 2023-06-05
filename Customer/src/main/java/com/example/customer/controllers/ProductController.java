@@ -30,6 +30,13 @@ public class ProductController {
 
   private final SessionAttributeSetter sessionAttributeSetter;
 
+  /**
+   * Constructs a new ProductController with the specified dependencies.
+   *
+   * @param productService         the ProductService to handle product-related operations
+   * @param categoryService        the CategoryService to handle category-related operations
+   * @param sessionAttributeSetter the SessionAttributeSetter to set session attributes
+   */
   @Autowired
   public ProductController(ProductService productService, CategoryService categoryService,
                            SessionAttributeSetter sessionAttributeSetter) {

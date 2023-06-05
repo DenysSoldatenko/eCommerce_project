@@ -8,9 +8,8 @@ import com.example.library.repositories.OrderDetailRepository;
 import com.example.library.repositories.OrderRepository;
 import com.example.library.services.OrderService;
 import com.example.library.services.ShoppingCartService;
-import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,11 +65,16 @@ public class OrderServiceImpl implements OrderService {
     order.setCustomer(shoppingCart.getCustomer());
     order.setTax(2);
     order.setTotalPrice(shoppingCart.getTotalPrice());
-    order.setAccept(false);
-    order.setDeliveryDate(new Timestamp(Instant.now().plus(Duration.ofDays(2)).toEpochMilli()));
+    order.setDeliveryDate(generateRandomDeliveryDate(order.getOrderDate()));
     order.setPaymentMethod("Cash");
     order.setQuantity(shoppingCart.getTotalItems());
     return order;
+  }
+
+  private static Date generateRandomDeliveryDate(Date orderDate) {
+    Instant instant = orderDate.toInstant()
+        .plus((long) (Math.random() * 4) + 2, ChronoUnit.DAYS);
+    return Date.from(instant);
   }
 
   private List<OrderDetail> createOrderDetailsFromCartItems(Set<CartItem> cartItems, Order order) {

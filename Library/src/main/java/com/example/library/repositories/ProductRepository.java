@@ -23,7 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
   /*Customer*/
   @Query("SELECT p FROM Product p "
-      + "WHERE p.isActivated = true AND p.isDeleted = false")
+      + "WHERE p.isActivated = true AND p.isDeleted = false and p.currentQuantity > 0")
   List<Product> getAllProducts();
 
   @Query(value = "SELECT p FROM Product p "

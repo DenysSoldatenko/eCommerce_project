@@ -45,13 +45,15 @@
                                </span>
                             </td>
                             <td class="name-pr">
-                               <span>
-                                <b>[(${order.deliveryDate})]</b>
-                               </span>
+                              <span>
+                                <b th:text="${order.deliveryDate}"
+                                   th:style="${order.deliveryDate > currentTime ? 'color: red' : 'color: green'}">
+                                </b>
+                              </span>
                             </td>
                             <td class="quantity-box" th:text="${order.quantity}"></td>
                             <td class="total-pr">
-                                <p style="color: red">$ [(${order.totalPrice})]</p>
+                                <p>$ [(${order.totalPrice})]</p>
                             </td>
                             <td class="total-pr" style="color: black">
                                 <span></span>[(${order.paymentMethod})]
