@@ -10,7 +10,11 @@ public interface CustomerService {
 
   CustomerDto save(CustomerDto customerDto);
 
+  Customer save(Customer customer);
+
   Customer findByUsername(String username);
 
-  Customer saveInfo(Customer customer);
+  void saveInfo(Customer customer);
+
+  CustomerDto getCustomerDto(Customer customer);
 }

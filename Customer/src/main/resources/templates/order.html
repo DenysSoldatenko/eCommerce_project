@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<!-- Basic -->
 <head th:replace="~{fragments::head}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
@@ -8,16 +7,9 @@
     <title>Orders</title>
 </head>
 <body>
-<!-- Start Main Top -->
-<div th:replace="fragments ::main-top"></div>
-<!-- End Main Top -->
-<!-- Start Main Top -->
-<header th:replace="~{fragments::main-header}"></header>
-<!-- End Main Top -->
-<!-- Start Top Search -->
+<div th:replace="~{fragments::main-top}"></div>
+<div th:replace="~{fragments::main-header}"></div>
 <div th:replace="~{fragments::top-search}"></div>
-<!-- End Top Search -->
-<!-- Update Personal Information -->
 <div class="cart-box-main">
     <div class="container">
         <div class="row">
@@ -71,9 +63,7 @@
         </div>
     </div>
 </div>
-<footer th:replace="~{fragments::footer}"></footer>
-<a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
-<!-- ALL JS FILES -->
+<div th:replace="~{fragments::instagram-box}"></div>
 <div th:replace="~{fragments::script}"></div>
 </body>
 </html>

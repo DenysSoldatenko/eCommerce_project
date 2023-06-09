@@ -1,26 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<!-- Basic -->
-<head th:replace="fragments::head">
-    <!--[if lt IE 9]>
+<head th:replace="~{fragments::head}">
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
     <title>Cart</title></head>
 <body>
-<!-- Start Main Top -->
-<div th:replace="fragments::main-top"></div>
-<!-- End Main Top -->
-<!-- Start Main Top -->
-<header th:replace="fragments::main-header"></header>
-<!-- End Main Top -->
-<!-- Start Top Search -->
-<div th:replace="fragments::top-search"></div>
-<!-- End Top Search -->
-<!-- Start All Title Box -->
-<div th:replace="fragments::slider"></div>
-<!-- End All Title Box -->
-<!-- Start Cart  -->
+<div th:replace="~{fragments::main-top}"></div>
+<div th:replace="~{fragments::main-header}"></div>
+<div th:replace="~{fragments::top-search}"></div>
+<div th:replace="~{fragments::slider}"></div>
 <div class="cart-box-main">
     <div class="container">
         <div class="row">
@@ -119,12 +107,8 @@
         </div>
     </div>
 </div>
-<!-- End Cart -->
-<!-- Start Feed  -->
-<div th:replace="fragments::instagram-box"></div>
-<!-- End Feed  -->
-<!-- Start Footer  -->
-<footer th:replace="fragments::footer"></footer>
-<div th:replace="fragments::script"></div>
+<div th:replace="~{fragments::instagram-box}"></div>
+<footer th:replace="~{fragments::footer}"></footer>
+<div th:replace="~{fragments::script}"></div>
 </body>
 </html>

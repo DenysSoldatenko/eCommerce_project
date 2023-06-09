@@ -1,17 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<!-- Basic -->
-<head th:replace="fragments :: head"><title>Register</title></head>
+<head th:replace="~{fragments::head}"><title>Register</title></head>
 <body>
-<!-- Start Main Top -->
-<div th:replace="fragments::main-top"></div>
-<!-- End Main Top -->
-<!-- Start Main Top -->
-<header th:replace="fragments::main-header"></header>
-<!-- End Main Top -->
-<!-- Start Top Search -->
-<div th:replace="fragments::top-search"></div>
-<!-- End Top Search -->
+<div th:replace="~{fragments::main-top}"></div>
+<div th:replace="~{fragments::main-header}"></div>
+<div th:replace="~{fragments::top-search}"></div>
 <section id="register-form">
     <div class="noi-dung">
         <div class="form">
@@ -70,7 +63,6 @@
         </div>
     </div>
 </section>
-<!-- ALL JS FILES -->
 <div th:replace="fragments::script"></div>
 </body>
 </html>

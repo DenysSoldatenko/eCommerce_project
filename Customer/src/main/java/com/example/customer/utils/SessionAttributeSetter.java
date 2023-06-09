@@ -29,6 +29,7 @@ public class SessionAttributeSetter {
   public void setSessionAttributes(Principal principal, HttpSession session) {
     if (principal != null) {
       Customer customer = customerService.findByUsername(principal.getName());
+      session.setAttribute("username", customer.getFirstName());
       ShoppingCart shoppingCart = customer.getCart();
       if (shoppingCart != null) {
         session.setAttribute("totalItems", shoppingCart.getTotalItems());

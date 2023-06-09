@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<!-- Basic -->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,25 +12,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- Site CSS -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- Responsive CSS -->
     <link rel="stylesheet" href="css/responsive.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/custom.css">
 </head>
 <body>
-<!-- Start Main Top -->
-<div th:replace="fragments::main-top"></div>
-<!-- End Main Top -->
-<!-- Start Main Top -->
-<header th:replace="fragments::main-header"></header>
-<!-- End Main Top -->
-<!-- Start Top Search -->
-<div th:replace="fragments::top-search"></div>
-<!-- End Top Search -->
+<div th:replace="~{fragments::main-top}"></div>
+<div th:replace="~{fragments::main-header}"></div>
+<div th:replace="~{fragments::top-search}"></div>
 <section id="login-form">
     <div class="noi-dung">
         <div class="form">
@@ -74,11 +63,7 @@
         </div>
     </div>
 </section>
-<!-- Start All Title Box -->
-<div th:replace="fragments::instagram-box"></div>
-<!-- End All Title Box -->
-<a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
-<!-- ALL JS FILES -->
-<div th:replace="fragments::script"></div>
+<div th:replace="~{fragments::instagram-box}"></div>
+<div th:replace="~{fragments::script}"></div>
 </body>
 </html>

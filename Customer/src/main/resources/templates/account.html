@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<!-- Basic -->
-<head th:replace="fragments::head">
+<head th:replace="~{fragments::head}">
     <title>Account Details</title>
 </head>
 <body>
-<!-- Start Main Top -->
-<div th:replace="fragments::main-top"></div>
-<!-- End Main Top -->
-<!-- Start Main Top -->
-<header th:replace="fragments::main-header"></header>
-<!-- End Main Top -->
-<!-- Start Top Search -->
-<div th:replace="fragments::top-search"></div>
-<!-- End Top Search -->
-<!-- End All Title Box -->
+<div th:replace="~{fragments::main-top}"></div>
+<div th:replace="~{fragments::main-header}"></div>
+<div th:replace="~{fragments::top-search}"></div>
 <div class="mainDiv">
     <div class="cardStyle">
         <div class="text alert alert-warning" th:if="${fail}">
@@ -25,7 +17,7 @@
         </div>
         <form th:action="@{/update-account}" method="put" th:object="${customer}">
             <h2 class="formTitle">
-                <i>Personal Information</i>
+                <i>Order Information</i>
             </h2>
             <div class="inputDiv">
                 <label class="inputLabel" for="firstname"> First name * </label>
@@ -55,8 +47,6 @@
         </form>
     </div>
 </div>
-<!-- End copyright  -->
-<!-- ALL JS FILES -->
-<div th:replace="fragments::script"></div>
+<div th:replace="~{fragments::script}"></div>
 </body>
 </html>
