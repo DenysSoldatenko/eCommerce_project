@@ -48,7 +48,7 @@ public class CategoryController {
     if (principal == null) {
       return "redirect:/login";
     }
-    List<Category> categories = categoryService.findAll();
+    List<Category> categories = categoryService.findAllCategories();
     model.addAttribute("categories", categories);
     model.addAttribute("size", categories.size());
     model.addAttribute("title", "Category");
@@ -85,7 +85,7 @@ public class CategoryController {
     categoryExceptionManager.validate(category);
 
     if (Objects.equals(categoryExceptionManager.getMessage(), "")) {
-      categoryService.save(category);
+      categoryService.createCategory(category);
       attributes.addFlashAttribute("success", "Added successfully");
     } else {
       attributes.addFlashAttribute("fail", categoryExceptionManager.getMessage());
@@ -109,7 +109,7 @@ public class CategoryController {
       return "redirect:/login";
     }
     model.addAttribute("title", "Update categories");
-    Category category = categoryService.findById(id)
+    Category category = categoryService.findCategoryById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
         "Product not found with id: " + id));
     model.addAttribute("category", category);
@@ -128,7 +128,7 @@ public class CategoryController {
     categoryExceptionManager.validate(category);
 
     if (Objects.equals(categoryExceptionManager.getMessage(), "")) {
-      categoryService.update(category);
+      categoryService.updateCategory(category);
       attributes.addFlashAttribute("success", "Updated successfully");
     } else {
       attributes.addFlashAttribute("fail", categoryExceptionManager.getMessage());
@@ -147,7 +147,7 @@ public class CategoryController {
   @RequestMapping(value = "/delete-category/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String deleteCategory(@PathVariable Long id, RedirectAttributes attributes) {
     try {
-      categoryService.deleteById(id);
+      categoryService.deleteCategoryById(id);
       attributes.addFlashAttribute("success", "Deleted successfully");
     } catch (Exception e) {
       e.printStackTrace();
@@ -166,7 +166,7 @@ public class CategoryController {
   @RequestMapping(value = "/enable-category/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String enableCategory(@PathVariable Long id, RedirectAttributes attributes) {
     try {
-      categoryService.enabledById(id);
+      categoryService.enableCategoryById(id);
       attributes.addFlashAttribute("success", "Enabled successfully");
     } catch (Exception e) {
       e.printStackTrace();

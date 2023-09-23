@@ -58,7 +58,7 @@ public class CartController {
       return "redirect:/login";
     }
 
-    Customer customer = customerService.findByUsername(principal.getName());
+    Customer customer = customerService.findCustomerByUsername(principal.getName());
     ShoppingCart shoppingCart = customer.getCart();
 
     if (shoppingCart == null || shoppingCart.getCartItems().isEmpty()) {
@@ -92,8 +92,8 @@ public class CartController {
       return "redirect:/login";
     }
 
-    Product product = productService.getProductById(productId);
-    Customer customer = customerService.findByUsername(principal.getName());
+    Product product = productService.findProductById(productId);
+    Customer customer = customerService.findCustomerByUsername(principal.getName());
     cartService.addItemToCart(product, quantity, customer);
     return "redirect:" + request.getHeader("Referer");
   }
@@ -118,8 +118,8 @@ public class CartController {
       return "redirect:/login";
     } else {
       String username = principal.getName();
-      Customer customer = customerService.findByUsername(username);
-      Product product = productService.getProductById(productId);
+      Customer customer = customerService.findCustomerByUsername(username);
+      Product product = productService.findProductById(productId);
       ShoppingCart cart = cartService.updateItemInCart(product, quantity, customer);
 
       model.addAttribute("shoppingCart", cart);
@@ -143,8 +143,8 @@ public class CartController {
       return "redirect:/login";
     } else {
       String username = principal.getName();
-      Customer customer = customerService.findByUsername(username);
-      Product product = productService.getProductById(productId);
+      Customer customer = customerService.findCustomerByUsername(username);
+      Product product = productService.findProductById(productId);
       ShoppingCart cart = cartService.deleteItemFromCart(product, customer);
 
       model.addAttribute("shoppingCart", cart);

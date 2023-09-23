@@ -1,28 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
-<head th:replace="fragments :: header"> </head>
+<head th:replace="~{fragments::header}"><title>Categories</title></head>
 <body id="page-top">
-<!-- Page Wrapper -->
 <div id="wrapper">
-    <!-- Sidebar -->
-    <ul th:replace="fragments :: sidebar"></ul>
-    <!-- End of Sidebar -->
-
-    <!-- Content Wrapper -->
+    <ul th:replace="~{fragments::sidebar}"></ul>
     <div id="content-wrapper" class="d-flex flex-column">
-        <!-- Main Content -->
         <div id="content">
-            <!-- Topbar -->
-            <nav th:replace="fragments :: topbar"></nav>
-            <!-- End of Topbar -->
-
-            <!-- Begin Page Content -->
+            <nav th:replace="~{fragments::topbar}"></nav>
             <div class="container-fluid">
-                <!-- Page Heading -->
                 <div th:if="${size == 0}">
                     <p>No category</p>
                 </div>
-                <a class="btn btn-primary" th:href="@{/add-category}">Add new category</a><br>
+                <a class="btn btn-primary" th:href="@{/add-category}">Add new
+                    category</a><br>
                 <div th:if="${success}" class="text-center alert alert-success">
                     <p th:text="${success}"></p>
                 </div>
@@ -42,29 +32,26 @@
                     <tr th:each="category : ${categories}">
                         <th scope="row" th:text="${category.id}"></th>
                         <td th:text="${category.name}"></td>
-                        <td><a th:href="@{/update-category/{id} (id = ${category.id})}" class="btn btn-primary">Update</a></td>
                         <td>
-                            <a th:if="${category.isActivated} == true" th:href="@{/delete-category/{id}(id=${category.id})}" class="btn btn-warning">Deleted</a>
-                            <a th:if="${category.isActivated} == false" th:href="@{/enable-category/{id}(id=${category.id})}" class="btn btn-primary">Enabled</a>
+                            <a th:href="@{/update-category/{id} (id = ${category.id})}"
+                               class="btn btn-primary">Update</a></td>
+                        <td>
+                            <a th:if="${category.isActivated} == true"
+                               th:href="@{/delete-category/{id}(id=${category.id})}"
+                               class="btn btn-warning">Deleted</a>
+                            <a th:if="${category.isActivated} == false"
+                               th:href="@{/enable-category/{id}(id=${category.id})}"
+                               class="btn btn-primary">Enabled</a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <!-- /.container-fluid -->
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
-        <footer th:replace="fragments :: footer"></footer>
-        <!-- End of Footer -->
+        <footer th:replace="~{fragments::footer}"></footer>
     </div>
-    <!-- End of Content Wrapper -->
 </div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<a th:replace="fragments :: scroll"></a>
-<div th:replace="fragments :: script"></div>
+<div th:replace="~{fragments::scroll}"></div>
+<div th:replace="~{fragments::script}"></div>
 </body>
 </html>

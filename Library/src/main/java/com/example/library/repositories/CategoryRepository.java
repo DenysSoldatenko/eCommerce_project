@@ -24,5 +24,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
       + "INNER JOIN Product p ON p.category.id = c.id "
       + "WHERE c.isActivated = true AND c.isDeleted = false "
       + "GROUP BY c.id")
-  List<CategoryDto> getCategoryAndProduct();
+  List<CategoryDto> getCategoriesWithProductCounts();
 }

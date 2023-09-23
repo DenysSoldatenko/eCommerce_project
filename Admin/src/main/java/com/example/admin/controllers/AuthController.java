@@ -103,7 +103,7 @@ public class AuthController {
         return "register";
       } else {
         adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
-        adminService.save(adminDto);
+        adminService.createAdmin(adminDto);
         model.addAttribute("success", "Register successfully!");
         model.addAttribute("adminDto", adminDto);
       }

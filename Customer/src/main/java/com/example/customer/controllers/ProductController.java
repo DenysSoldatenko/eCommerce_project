@@ -56,9 +56,9 @@ public class ProductController {
   public String getProducts(Principal principal, HttpSession session,
                             Model model, @PathVariable("pageNo") int pageNo) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
-    List<Product> products = productService.getAllProducts();
-    Page<Product> listViewProducts = productService.listViewProducts(pageNo);
+    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();
+    List<Product> products = productService.findAllProductsForCustomer();
+    Page<Product> listViewProducts = productService.findAllProductsPaginatedForCustomer(pageNo);
     model.addAttribute("categories", categoryDtoList);
     model.addAttribute("viewProducts", listViewProducts);
     model.addAttribute("totalPages", listViewProducts.getTotalPages());
@@ -78,9 +78,9 @@ public class ProductController {
   public String findProductById(Principal principal, HttpSession session,
                                 @PathVariable("id") Long id, Model model) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    Product product = productService.getProductById(id);
+    Product product = productService.findProductById(id);
     Long categoryId = product.getCategory().getId();
-    List<Product> products = productService.getRelatedProducts(categoryId);
+    List<Product> products = productService.findRelatedProductsById(categoryId);
     model.addAttribute("product", product);
     model.addAttribute("products", products);
     return "find-product";
@@ -97,12 +97,12 @@ public class ProductController {
   @GetMapping("/products-in-category/{id}")
   public String getProductsInCategory(Principal principal, HttpSession session,
                                       @PathVariable("id") Long categoryId, Model model) {
-    Category category = categoryService.findById(categoryId)
+    Category category = categoryService.findCategoryById(categoryId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
         "Category not found with id: " + categoryId));
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    List<CategoryDto> categories = categoryService.getCategoryAndProduct();
-    List<Product> products = productService.getProductsInCategory(categoryId);
+    List<CategoryDto> categories = categoryService.getCategoryAndProductCounts();
+    List<Product> products = productService.findProductsInCategoryById(categoryId);
     model.addAttribute("category", category);
     model.addAttribute("categories", categories);
     model.addAttribute("products", products);
@@ -118,9 +118,9 @@ public class ProductController {
   @GetMapping("/high-price")
   public String filterHighPrice(Principal principal, HttpSession session, Model model) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    List<Category> categories = categoryService.findAllByActivated();
-    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
-    List<Product> products = productService.filterHighPrice();
+    List<Category> categories = categoryService.findActivatedCategories();
+    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();
+    List<Product> products = productService.filterProductsByHighPrice();
     model.addAttribute("categoryDtoList", categoryDtoList);
     model.addAttribute("products", products);
     model.addAttribute("categories", categories);
@@ -136,9 +136,9 @@ public class ProductController {
   @GetMapping("/low-price")
   public String filterLowPrice(Principal principal, HttpSession session, Model model) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    List<Category> categories = categoryService.findAllByActivated();
-    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
-    List<Product> products = productService.filterLowPrice();
+    List<Category> categories = categoryService.findActivatedCategories();
+    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();
+    List<Product> products = productService.filterProductsByLowPrice();
     model.addAttribute("categoryDtoList", categoryDtoList);
     model.addAttribute("products", products);
     model.addAttribute("categories", categories);
@@ -156,9 +156,9 @@ public class ProductController {
   public String searchProduct(Principal principal, HttpSession session,
                               @RequestParam("keyword") String keyword, Model model) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProduct();
-    List<Product> filteredProducts = productService.searchProducts(keyword);
-    List<Category> filteredCategories = categoryService.getFilteredCategories(filteredProducts);
+    List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();
+    List<Product> filteredProducts = productService.findAllProductsBySearch(keyword);
+    List<Category> filteredCategories = categoryService.findFilteredCategoriesByProducts(filteredProducts);
     model.addAttribute("categoryDtoList", categoryDtoList);
     model.addAttribute("products", filteredProducts);
     model.addAttribute("categories", filteredCategories);

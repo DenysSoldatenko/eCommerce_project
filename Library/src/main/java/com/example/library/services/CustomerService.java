@@ -8,13 +8,13 @@ import com.example.library.models.Customer;
  */
 public interface CustomerService {
 
-  CustomerDto save(CustomerDto customerDto);
+  void createCustomerDto(CustomerDto customerDto);
 
-  Customer save(Customer customer);
+  void createCustomer(Customer customer);
 
-  Customer findByUsername(String username);
+  void updateCustomerInfo(Customer customer);
 
-  void saveInfo(Customer customer);
+  Customer findCustomerByUsername(String username);
 
-  CustomerDto getCustomerDto(Customer customer);
+  CustomerDto convertToDto(Customer customer);
 }

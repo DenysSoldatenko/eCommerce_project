@@ -1,97 +1,60 @@
 package com.example.library.services.implementations;
 
-import com.example.library.models.CartItem;
 import com.example.library.models.Order;
 import com.example.library.models.OrderDetail;
 import com.example.library.models.ShoppingCart;
-import com.example.library.repositories.OrderDetailRepository;
 import com.example.library.repositories.OrderRepository;
+import com.example.library.services.OrderDetailService;
 import com.example.library.services.OrderService;
 import com.example.library.services.ShoppingCartService;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import com.example.library.utils.DeliveryDateManager;
+import com.example.library.utils.TaxCalculationManager;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
  * Implementation of the OrderService interface.
  */
 @Service
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
-  private final OrderDetailRepository detailRepository;
+  private final OrderDetailService orderDetailService;
   private final ShoppingCartService cartService;
-
-  /**
-   * Constructs a new OrderServiceImpl with the provided dependencies.
-   *
-   * @param orderRepository   the OrderRepository for accessing order-related data
-   * @param detailRepository  the OrderDetailRepository for accessing order detail data
-   * @param cartService       the ShoppingCartService for handling shopping cart operations
-   */
-  @Autowired
-  public OrderServiceImpl(OrderRepository orderRepository, OrderDetailRepository detailRepository,
-      ShoppingCartService cartService) {
-    this.orderRepository = orderRepository;
-    this.detailRepository = detailRepository;
-    this.cartService = cartService;
-  }
+  private final TaxCalculationManager taxService;
+  private final DeliveryDateManager deliveryDateService;
 
   @Override
-  public Order save(ShoppingCart shoppingCart) {
-    Order order = createOrderFromCart(shoppingCart);
-    List<OrderDetail> list = createOrderDetailsFromCartItems(shoppingCart.getCartItems(), order);
-    order.setOrderDetailList(list);
+  public void createOrder(ShoppingCart shoppingCart) {
+    Order order = buildOrderFromCart(shoppingCart);
+    List<OrderDetail> orderDetails
+        = orderDetailService.createOrderDetailsFromCartItems(shoppingCart.getCartItems(), order);
+    order.setOrderDetailList(orderDetails);
     cartService.deleteCartById(shoppingCart.getId());
-    return orderRepository.save(order);
+    orderRepository.save(order);
   }
 
   @Override
-  public void cancelOrder(Long id) {
-    Order order = orderRepository.findById(id).orElse(null);
-    if (order != null) {
-      deleteOrderDetails(order.getOrderDetailList());
+  public void cancelOrder(Long orderId) {
+    Optional<Order> orderOptional = orderRepository.findById(orderId);
+    orderOptional.ifPresent(order -> {
+      orderDetailService.deleteOrderDetails(order.getOrderDetailList());
       orderRepository.delete(order);
-    }
+    });
   }
 
-  private Order createOrderFromCart(ShoppingCart shoppingCart) {
-    Order order = new Order();
-    order.setOrderDate(new Date());
-    order.setCustomer(shoppingCart.getCustomer());
-    order.setTax(2);
-    order.setTotalPrice(shoppingCart.getTotalPrice());
-    order.setDeliveryDate(generateRandomDeliveryDate(order.getOrderDate()));
-    order.setPaymentMethod("Cash");
-    order.setQuantity(shoppingCart.getTotalItems());
-    return order;
-  }
-
-  private static Date generateRandomDeliveryDate(Date orderDate) {
-    Instant instant = orderDate.toInstant()
-        .plus((long) (Math.random() * 4) + 2, ChronoUnit.DAYS);
-    return Date.from(instant);
-  }
-
-  private List<OrderDetail> createOrderDetailsFromCartItems(Set<CartItem> cartItems, Order order) {
-    List<OrderDetail> orderDetailList = new ArrayList<>();
-    for (CartItem item : cartItems) {
-      OrderDetail orderDetail = new OrderDetail();
-      orderDetail.setOrder(order);
-      orderDetail.setQuantity(item.getQuantity());
-      orderDetail.setTotalPrice(item.getTotalPrice());
-      orderDetail.setProduct(item.getProduct());
-      detailRepository.save(orderDetail);
-      orderDetailList.add(orderDetail);
-    }
-    return orderDetailList;
-  }
-
-  private void deleteOrderDetails(List<OrderDetail> orderDetails) {
-    detailRepository.deleteAll(orderDetails);
+  private Order buildOrderFromCart(ShoppingCart shoppingCart) {
+    return Order.builder()
+    .orderDate(new Date())
+    .customer(shoppingCart.getCustomer())
+    .tax(taxService.calculateTax(shoppingCart))
+    .totalPrice(shoppingCart.getTotalPrice())
+    .deliveryDate(deliveryDateService.generateDeliveryDate(shoppingCart.getTotalItems()))
+    .paymentMethod("Cash")
+    .quantity(shoppingCart.getTotalItems())
+    .build();
   }
 }

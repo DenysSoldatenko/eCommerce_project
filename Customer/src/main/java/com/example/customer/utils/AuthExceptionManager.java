@@ -56,7 +56,7 @@ public class AuthExceptionManager {
       model.addAttribute("customerDto", customerDto);
     }
 
-    Customer customer = customerService.findByUsername(username);
+    Customer customer = customerService.findCustomerByUsername(username);
     if (customer != null) {
       model.addAttribute("emailError", "Your email has been registered!");
       model.addAttribute("customerDto", customerDto);

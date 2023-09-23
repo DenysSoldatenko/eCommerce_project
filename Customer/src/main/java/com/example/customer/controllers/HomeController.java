@@ -54,7 +54,7 @@ public class HomeController {
   @GetMapping("/home")
   public String index(Principal principal, HttpSession session, Model model) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
-    List<Category> categoryList = categoryService.findAll();
+    List<Category> categoryList = categoryService.findAllCategories();
     List<ProductDto> productDtoList = productService.findAll();
     model.addAttribute("categories", categoryList);
     model.addAttribute("products", productDtoList);

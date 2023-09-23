@@ -6,57 +6,41 @@ import com.example.library.repositories.CustomerRepository;
 import com.example.library.repositories.RoleRepository;
 import com.example.library.services.CustomerService;
 import java.util.Collections;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Implementation of the CustomerService interface.
  */
 @Service
+@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
   private final RoleRepository repository;
-
   private final CustomerRepository customerRepository;
-
   private final ModelMapper modelMapper;
 
-  /**
-   * Constructs a CustomerServiceImpl with the specified dependencies.
-   *
-   * @param repository          the RoleRepository for managing roles
-   * @param customerRepository the CustomerRepository for database access
-   * @param modelMapper        the ModelMapper for object mapping
-   */
-  @Autowired
-  public CustomerServiceImpl(RoleRepository repository,
-      CustomerRepository customerRepository, ModelMapper modelMapper) {
-    this.repository = repository;
-    this.customerRepository = customerRepository;
-    this.modelMapper = modelMapper;
-  }
-
   @Override
-  public CustomerDto save(CustomerDto customerDto) {
+  public void createCustomerDto(CustomerDto customerDto) {
     Customer customer = modelMapper.map(customerDto, Customer.class);
     customer.setRoles(Collections.singletonList(repository.findByName("CUSTOMER")));
     Customer savedCustomer = customerRepository.save(customer);
-    return modelMapper.map(savedCustomer, CustomerDto.class);
+    modelMapper.map(savedCustomer, CustomerDto.class);
   }
 
   @Override
-  public Customer save(Customer customer) {
-    return customerRepository.save(customer);
+  public void createCustomer(Customer customer) {
+    customerRepository.save(customer);
   }
 
   @Override
-  public Customer findByUsername(String username) {
+  public Customer findCustomerByUsername(String username) {
     return customerRepository.findByUsername(username);
   }
 
   @Override
-  public void saveInfo(Customer c) {
+  public void updateCustomerInfo(Customer c) {
     Customer customer = customerRepository.findByUsername(c.getUsername());
     customer.setAddress(c.getAddress());
     customer.setPhoneNumber(c.getPhoneNumber());
@@ -64,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public CustomerDto getCustomerDto(Customer customer) {
+  public CustomerDto convertToDto(Customer customer) {
     return modelMapper.map(customer, CustomerDto.class);
   }
 }

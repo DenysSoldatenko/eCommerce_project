@@ -45,7 +45,7 @@ public class OrderController {
       return "redirect:/login";
     }
 
-    Customer customer = customerService.findByUsername(principal.getName());
+    Customer customer = customerService.findCustomerByUsername(principal.getName());
     if (customer.getPhoneNumber() == null || customer.getAddress() == null) {
       model.addAttribute("customer", customer);
       model.addAttribute("fail", "You must fill the information after checkout!");
@@ -71,7 +71,7 @@ public class OrderController {
     if (principal == null) {
       return "redirect:/login";
     } else {
-      Customer customer = customerService.findByUsername(principal.getName());
+      Customer customer = customerService.findCustomerByUsername(principal.getName());
       List<Order> orderList = customer.getOrders();
       Timestamp currentTime =  new Timestamp(new Date().getTime());
       model.addAttribute("orders", orderList);
@@ -94,9 +94,9 @@ public class OrderController {
     if (principal == null) {
       return "redirect:/login";
     } else {
-      Customer customer = customerService.findByUsername(principal.getName());
+      Customer customer = customerService.findCustomerByUsername(principal.getName());
       ShoppingCart cart = customer.getCart();
-      orderService.save(cart);
+      orderService.createOrder(cart);
       return "redirect:/orders";
     }
   }

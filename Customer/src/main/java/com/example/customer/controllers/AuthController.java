@@ -74,7 +74,7 @@ public class AuthController {
         return "register";
       } else {
         customerDto.setPassword(passwordEncoder.encode(customerDto.getPassword()));
-        customerService.save(customerDto);
+        customerService.createCustomerDto(customerDto);
         model.addAttribute("success", "Register successfully");
       }
     } catch (Exception e) {

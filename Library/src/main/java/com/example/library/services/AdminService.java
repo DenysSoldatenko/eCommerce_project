@@ -8,7 +8,7 @@ import com.example.library.models.Admin;
  */
 public interface AdminService {
 
-  Admin findByUsername(String username);
+  void createAdmin(AdminDto adminDto);
 
-  Admin save(AdminDto adminDto);
+  Admin findByUsername(String username);
 }

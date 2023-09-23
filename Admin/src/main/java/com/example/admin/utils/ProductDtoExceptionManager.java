@@ -76,7 +76,7 @@ public class ProductDtoExceptionManager {
         message = "Failed to perform create action because empty image";
       }
     } else {
-      ProductDto product = productService.getById(productDto.getId());
+      ProductDto product = productService.findProductDetailsById(productDto.getId());
       if (imageProduct.isEmpty() && product.getImage().isEmpty()) {
         message = "Failed to perform update action because empty image";
       }

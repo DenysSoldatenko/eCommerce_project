@@ -39,7 +39,7 @@ public class CategoryExceptionManager {
   }
 
   private void handleDuplicateName(Category category) {
-    Optional<Category> cat = categoryService.findByName(category.getName());
+    Optional<Category> cat = categoryService.findCategoryByName(category.getName());
     if (cat.isPresent()) {
       message = "Failed to perform because duplicate name";
     }

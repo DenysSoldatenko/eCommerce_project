@@ -10,24 +10,24 @@ import java.util.Optional;
  * Service interface for managing categories.
  */
 public interface CategoryService {
-  List<Category> findAll();
+  List<Category> findAllCategories();
 
-  Category save(Category category);
+  void createCategory(Category category);
 
-  Optional<Category> findById(Long id);
+  Optional<Category> findCategoryById(Long id);
 
-  Optional<Category> findByName(String name);
+  Optional<Category> findCategoryByName(String name);
 
-  void update(Category category);
+  void updateCategory(Category category);
 
-  void deleteById(Long id);
+  void deleteCategoryById(Long id);
 
-  void enabledById(Long id);
+  void enableCategoryById(Long id);
 
-  List<Category> findAllByActivated();
+  List<Category> findActivatedCategories();
 
   /*Customer*/
-  List<CategoryDto> getCategoryAndProduct();
+  List<CategoryDto> getCategoryAndProductCounts();
 
-  List<Category> getFilteredCategories(List<Product> filteredProducts);
+  List<Category> findFilteredCategoriesByProducts(List<Product> filteredProducts);
 }

@@ -2,6 +2,7 @@ package com.example.library.services;
 
 import com.example.library.dtos.ProductDto;
 import com.example.library.models.Product;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,36 +13,36 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ProductService {
   List<ProductDto> findAll();
 
-  Product save(MultipartFile imageProduct, ProductDto productDto);
+  void createProduct(MultipartFile imageProduct, ProductDto productDto) throws IOException;
 
-  Product update(MultipartFile imageProduct, ProductDto productDto);
+  void updateProduct(MultipartFile imageProduct, ProductDto productDto) throws IOException;
 
-  void deleteById(Long id);
+  void deleteProductById(Long id);
 
-  void enableById(Long id);
+  void enableProductById(Long id);
 
-  Page<Product> pageProducts(int pageNo);
+  Page<Product> findAllProductsPaginated(int pageNo);
 
-  Page<Product> searchProducts(int pageNo, String keyword);
+  Page<Product> findAllProductsPaginatedBySearch(int pageNo, String keyword);
 
-  List<Product> searchProducts(String keyword);
+  List<Product> findAllProductsBySearch(String keyword);
 
-  ProductDto getById(Long id);
+  ProductDto findProductDetailsById(Long id);
 
 
   /*Customer*/
-  List<Product> getAllProducts();
+  List<Product> findAllProductsForCustomer();
 
-  Page<Product> listViewProducts(int pageNo);
+  Page<Product> findAllProductsPaginatedForCustomer(int pageNo);
 
-  Product getProductById(Long id);
+  Product findProductById(Long id);
 
-  List<Product> getRelatedProducts(Long categoryId);
+  List<Product> findRelatedProductsById(Long categoryId);
 
-  List<Product> getProductsInCategory(Long categoryId);
+  List<Product> findProductsInCategoryById(Long categoryId);
 
-  List<Product> filterHighPrice();
+  List<Product> filterProductsByHighPrice();
 
-  List<Product> filterLowPrice();
+  List<Product> filterProductsByLowPrice();
 }
 

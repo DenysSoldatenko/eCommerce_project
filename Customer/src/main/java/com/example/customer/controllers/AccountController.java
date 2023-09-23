@@ -66,7 +66,7 @@ public class AccountController {
     }
 
     String username = principal.getName();
-    Customer customer = customerService.findByUsername(username);
+    Customer customer = customerService.findCustomerByUsername(username);
     model.addAttribute("customer", customer);
     return "account";
   }
@@ -84,7 +84,7 @@ public class AccountController {
     customerExceptionManager.validate(customer);
 
     if (Objects.equals(customerExceptionManager.getMessage(), "")) {
-      customerService.saveInfo(customer);
+      customerService.updateCustomerInfo(customer);
       attributes.addFlashAttribute("success", "Added successfully");
     } else {
       attributes.addFlashAttribute("fail", customerExceptionManager.getMessage());
@@ -106,8 +106,8 @@ public class AccountController {
       return "redirect:/login";
     }
 
-    Customer customer = customerService.findByUsername(principal.getName());
-    CustomerDto customerDto = customerService.getCustomerDto(customer);
+    Customer customer = customerService.findCustomerByUsername(principal.getName());
+    CustomerDto customerDto = customerService.convertToDto(customer);
     model.addAttribute("customerDto", customerDto);
     return "change-password";
   }
@@ -132,9 +132,9 @@ public class AccountController {
                                          BindingResult result, Model model) {
     try {
       if (!result.hasErrors() && !model.containsAttribute("passwordError")) {
-        Customer existingCustomer = customerService.findByUsername(customerDto.getUsername());
+        Customer existingCustomer = customerService.findCustomerByUsername(customerDto.getUsername());
         existingCustomer.setPassword(passwordEncoder.encode(customerDto.getPassword()));
-        customerService.save(existingCustomer);
+        customerService.createCustomer(existingCustomer);
         model.addAttribute("success", "Password updated successfully");
       }
     } catch (Exception e) {

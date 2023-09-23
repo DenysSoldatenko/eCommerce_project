@@ -5,98 +5,87 @@ import com.example.library.models.Category;
 import com.example.library.models.Product;
 import com.example.library.repositories.CategoryRepository;
 import com.example.library.services.CategoryService;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
  * Implementation of the CategoryService interface.
  */
 @Service
+@AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
   private final CategoryRepository categoryRepository;
 
-  @Autowired
-  public CategoryServiceImpl(CategoryRepository categoryRepository) {
-    this.categoryRepository = categoryRepository;
-  }
-
   @Override
-  public List<Category> findAll() {
+  public List<Category> findAllCategories() {
     return categoryRepository.findAll();
   }
 
   @Override
-  public Category save(Category category) {
+  public void createCategory(Category category) {
     Category categorySave = new Category(category.getName());
-    return categoryRepository.save(categorySave);
+    categoryRepository.save(categorySave);
   }
 
   @Override
-  public Optional<Category> findById(Long id) {
+  public Optional<Category> findCategoryById(Long id) {
     return categoryRepository.findById(id);
   }
 
   @Override
-  public Optional<Category> findByName(String name) {
+  public Optional<Category> findCategoryByName(String name) {
     return categoryRepository.findByName(name);
   }
 
   @Override
-  public void update(Category category) {
-    Optional<Category> categoryUpdate = categoryRepository.findById(category.getId());
-    if (categoryUpdate.isPresent()) {
-      categoryUpdate.get().setName(category.getName());
-      categoryUpdate.get().setActivated(category.isActivated());
-      categoryUpdate.get().setDeleted(category.isDeleted());
-      categoryRepository.save(categoryUpdate.get());
-    }
+  public void updateCategory(Category category) {
+    Optional<Category> categoryToUpdate = categoryRepository.findById(category.getId());
+    categoryToUpdate.ifPresent(existingCategory -> {
+      existingCategory.setName(category.getName());
+      existingCategory.setActivated(category.isActivated());
+      existingCategory.setDeleted(category.isDeleted());
+      categoryRepository.save(existingCategory);
+    });
   }
 
   @Override
-  public void deleteById(Long id) {
+  public void deleteCategoryById(Long id) {
     Optional<Category> category = categoryRepository.findById(id);
-    if (category.isPresent()) {
-      category.get().setDeleted(true);
-      category.get().setActivated(false);
-      categoryRepository.save(category.get());
-    }
+    category.ifPresent(existingCategory -> {
+      existingCategory.setDeleted(true);
+      existingCategory.setActivated(false);
+      categoryRepository.save(existingCategory);
+    });
   }
 
   @Override
-  public void enabledById(Long id) {
+  public void enableCategoryById(Long id) {
     Optional<Category> category = categoryRepository.findById(id);
-    if (category.isPresent()) {
-      category.get().setDeleted(false);
-      category.get().setActivated(true);
-      categoryRepository.save(category.get());
-    }
+    category.ifPresent(existingCategory -> {
+      existingCategory.setDeleted(false);
+      existingCategory.setActivated(true);
+      categoryRepository.save(existingCategory);
+    });
   }
 
   @Override
-  public List<Category> findAllByActivated() {
+  public List<Category> findActivatedCategories() {
     return categoryRepository.findAllByActivated();
   }
 
   @Override
-  public List<CategoryDto> getCategoryAndProduct() {
-    return categoryRepository.getCategoryAndProduct();
+  public List<CategoryDto> getCategoryAndProductCounts() {
+    return categoryRepository.getCategoriesWithProductCounts();
   }
 
   @Override
-  public List<Category> getFilteredCategories(List<Product> filteredProducts) {
-    List<Category> filteredCategories = new ArrayList<>();
-    for (Category category : categoryRepository.findAllByActivated()) {
-      for (Product product : filteredProducts) {
-        if (Objects.equals(product.getCategory().getId(), category.getId())) {
-          filteredCategories.add(category);
-          break;
-        }
-      }
-    }
-    return filteredCategories;
+  public List<Category> findFilteredCategoriesByProducts(List<Product> filteredProducts) {
+    return categoryRepository.findAllByActivated().stream()
+    .filter(category -> filteredProducts.stream()
+    .anyMatch(product -> Objects.equals(product.getCategory().getId(), category.getId())))
+    .toList();
   }
 }

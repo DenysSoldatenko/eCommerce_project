@@ -6,6 +6,7 @@ import com.example.library.models.Category;
 import com.example.library.models.Product;
 import com.example.library.services.CategoryService;
 import com.example.library.services.ProductService;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
@@ -84,7 +85,7 @@ public class ProductController {
     if (principal == null) {
       return "redirect:/login";
     }
-    List<Category> categories = categoryService.findAllByActivated();
+    List<Category> categories = categoryService.findActivatedCategories();
     model.addAttribute("categories", categories);
     model.addAttribute("productNew", new ProductDto());
     return "add-product";
@@ -101,10 +102,10 @@ public class ProductController {
   @PostMapping("/add-product")
   public String addProduct(@ModelAttribute("productNew") ProductDto productDto,
                            @RequestParam("imageProduct") MultipartFile imageProduct,
-                           RedirectAttributes attributes) {
+                           RedirectAttributes attributes) throws IOException {
     productDtoExceptionManager.validate(productDto, imageProduct);
     if (Objects.equals(productDtoExceptionManager.getMessage(), "")) {
-      productService.save(imageProduct, productDto);
+      productService.createProduct(imageProduct, productDto);
       attributes.addFlashAttribute("success", "Added successfully");
     } else {
       attributes.addFlashAttribute("fail", productDtoExceptionManager.getMessage());
@@ -128,8 +129,8 @@ public class ProductController {
       return "redirect:/login";
     }
     model.addAttribute("title", "Update products");
-    List<Category> categories = categoryService.findAllByActivated();
-    ProductDto productDto = productService.getById(id);
+    List<Category> categories = categoryService.findActivatedCategories();
+    ProductDto productDto = productService.findProductDetailsById(id);
     model.addAttribute("categories", categories);
     model.addAttribute("productDto", productDto);
     return "update-product";
@@ -147,10 +148,10 @@ public class ProductController {
   @PostMapping("/update-product/{id}")
   public String updateProduct(@ModelAttribute("productDto") ProductDto productDto,
                               @RequestParam("imageProduct")MultipartFile imageProduct,
-                              RedirectAttributes attributes) {
+                              RedirectAttributes attributes) throws IOException {
     productDtoExceptionManager.validate(productDto, imageProduct);
     if (Objects.equals(productDtoExceptionManager.getMessage(), "")) {
-      productService.update(imageProduct, productDto);
+      productService.updateProduct(imageProduct, productDto);
       attributes.addFlashAttribute("success", "Updated successfully");
     } else {
       attributes.addFlashAttribute("fail", productDtoExceptionManager.getMessage());
@@ -169,7 +170,7 @@ public class ProductController {
   @RequestMapping(value = "/enable-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String enabledProduct(@PathVariable("id")Long id, RedirectAttributes attributes) {
     try {
-      productService.enableById(id);
+      productService.enableProductById(id);
       attributes.addFlashAttribute("success", "Enabled successfully!");
     } catch (Exception e) {
       e.printStackTrace();
@@ -188,7 +189,7 @@ public class ProductController {
   @RequestMapping(value = "/delete-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String deletedProduct(@PathVariable("id") Long id, RedirectAttributes attributes) {
     try {
-      productService.deleteById(id);
+      productService.deleteProductById(id);
       attributes.addFlashAttribute("success", "Deleted successfully!");
     } catch (Exception e) {
       e.printStackTrace();
@@ -211,7 +212,7 @@ public class ProductController {
     if (principal == null) {
       return "redirect:/login";
     }
-    Page<Product> products = productService.pageProducts(pageNo);
+    Page<Product> products = productService.findAllProductsPaginated(pageNo);
     model.addAttribute("title", "Manage Product");
     model.addAttribute("size", products.getSize());
     model.addAttribute("totalPages", products.getTotalPages());
@@ -237,7 +238,7 @@ public class ProductController {
     if (principal == null) {
       return "redirect:/login";
     }
-    Page<Product> products = productService.searchProducts(pageNo, keyword);
+    Page<Product> products = productService.findAllProductsPaginatedBySearch(pageNo, keyword);
     model.addAttribute("title", "Search Result");
     model.addAttribute("products", products);
     model.addAttribute("size", products.getSize());

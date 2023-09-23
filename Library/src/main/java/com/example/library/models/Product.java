@@ -38,7 +38,6 @@ public class Product {
   private String name;
   private String description;
   private double costPrice;
-  private double salePrice;
   private int currentQuantity;
 
   @Lob
