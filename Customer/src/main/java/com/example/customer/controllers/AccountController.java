@@ -132,7 +132,8 @@ public class AccountController {
                                          BindingResult result, Model model) {
     try {
       if (!result.hasErrors() && !model.containsAttribute("passwordError")) {
-        Customer existingCustomer = customerService.findCustomerByUsername(customerDto.getUsername());
+        Customer existingCustomer
+            = customerService.findCustomerByUsername(customerDto.getUsername());
         existingCustomer.setPassword(passwordEncoder.encode(customerDto.getPassword()));
         customerService.createCustomer(existingCustomer);
         model.addAttribute("success", "Password updated successfully");

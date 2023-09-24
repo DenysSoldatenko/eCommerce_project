@@ -49,6 +49,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
       + " ORDER BY p.costPrice")
   List<Product> filterProductsByLowPrice();
 
-  @Query("SELECT p FROM Product p WHERE p.name LIKE %:keyword% OR p.description LIKE %:keyword%")
+  @Query("SELECT p FROM Product p WHERE p.isActivated = true AND p.name LIKE %:keyword% "
+      + "OR p.description LIKE %:keyword%")
   List<Product> searchProductsByNameOrDescription(@Param("keyword") String keyword);
 }

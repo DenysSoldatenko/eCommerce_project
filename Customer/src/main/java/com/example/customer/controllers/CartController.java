@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Controller class for handling shopping cart-related operations.
+ * Controller class for handling shopping-cart-related operations.
  */
 @Controller
 public class CartController {
@@ -117,6 +117,11 @@ public class CartController {
     if (principal == null) {
       return "redirect:/login";
     } else {
+      if (quantity > productService.findProductById(productId).getCurrentQuantity()) {
+        model.addAttribute("check", "Requested quantity exceeds available stock!");
+        return "cart";
+      }
+
       String username = principal.getName();
       Customer customer = customerService.findCustomerByUsername(username);
       Product product = productService.findProductById(productId);

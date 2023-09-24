@@ -158,7 +158,9 @@ public class ProductController {
     sessionAttributeSetter.setSessionAttributes(principal, session);
     List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();
     List<Product> filteredProducts = productService.findAllProductsBySearch(keyword);
-    List<Category> filteredCategories = categoryService.findFilteredCategoriesByProducts(filteredProducts);
+    List<Category> filteredCategories
+        = categoryService.findFilteredCategoriesByProducts(filteredProducts);
+
     model.addAttribute("categoryDtoList", categoryDtoList);
     model.addAttribute("products", filteredProducts);
     model.addAttribute("categories", filteredCategories);
