@@ -1,10 +1,11 @@
-package com.example.admin.utils;
+package com.example.admin.validations.impl;
 
+import com.example.admin.validations.AdminDtoExceptionService;
 import com.example.library.dtos.AdminDto;
 import com.example.library.models.Admin;
 import com.example.library.services.implementations.AdminServiceImpl;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,14 +14,10 @@ import org.springframework.validation.BindingResult;
  * Utility class for handling exceptions related to the Admin DTO.
  */
 @Component
-public class AdminDtoExceptionManager {
-
+@RequiredArgsConstructor
+public class AdminDtoExceptionServiceImpl implements AdminDtoExceptionService {
+  private static final String ADMIN_DTO = "adminDto";
   private final AdminServiceImpl adminService;
-
-  @Autowired
-  public AdminDtoExceptionManager(AdminServiceImpl adminService) {
-    this.adminService = adminService;
-  }
 
   /**
    * Validates the AdminDto object and adds error attributes
@@ -30,6 +27,7 @@ public class AdminDtoExceptionManager {
    * @param result    the BindingResult object for validation result
    * @param model     the model object to add error attributes
    */
+  @Override
   public void validate(AdminDto adminDto, BindingResult result, Model model) {
     handleException(adminDto, result, model);
     handleEmail(adminDto, model);
@@ -43,10 +41,10 @@ public class AdminDtoExceptionManager {
    * @param result    the BindingResult object for validation result
    * @param model     the model object to add the adminDto attribute
    */
-  private void handleException(AdminDto adminDto, BindingResult result, Model model) {
+  @Override
+  public void handleException(AdminDto adminDto, BindingResult result, Model model) {
     if (result.hasErrors()) {
-      model.addAttribute("adminDto", adminDto);
-      System.out.println(result);
+      model.addAttribute(ADMIN_DTO, adminDto);
     }
   }
 
@@ -57,12 +55,13 @@ public class AdminDtoExceptionManager {
    * @param adminDto  the AdminDto object to check for email validation
    * @param model     the model object to add the error attributes
    */
-  private void handleEmail(AdminDto adminDto, Model model) {
+  @Override
+  public void handleEmail(AdminDto adminDto, Model model) {
     String username = adminDto.getUsername();
     Optional<Admin> admin = Optional.ofNullable(adminService.findByUsername(username));
 
     if (admin.isPresent()) {
-      model.addAttribute("adminDto", adminDto);
+      model.addAttribute(ADMIN_DTO, adminDto);
       model.addAttribute("emailError", "Your email has been registered!");
     }
   }
@@ -74,9 +73,10 @@ public class AdminDtoExceptionManager {
    * @param adminDto  the AdminDto object to check for password validation
    * @param model     the model object to add the error attribute
    */
-  private void handlePassword(AdminDto adminDto, Model model) {
+  @Override
+  public void handlePassword(AdminDto adminDto, Model model) {
     if (!adminDto.getPassword().equals(adminDto.getRepeatPassword())) {
-      model.addAttribute("adminDto", adminDto);
+      model.addAttribute(ADMIN_DTO, adminDto);
       model.addAttribute("passwordError", "Your password may be wrong! Check again!");
     }
   }

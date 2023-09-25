@@ -1,13 +1,10 @@
 package com.example.admin.controllers;
 
-import com.example.admin.utils.AdminDtoExceptionManager;
+import com.example.admin.validations.AdminDtoExceptionService;
 import com.example.library.dtos.AdminDto;
-import com.example.library.services.implementations.AdminServiceImpl;
+import com.example.library.services.AdminService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,26 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Controller class for handling login, registration, and other related actions.
  */
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
-  private final AdminDtoExceptionManager adminDtoExceptionManager;
-  private final AdminServiceImpl adminService;
-  private final BCryptPasswordEncoder passwordEncoder;
 
-  /**
-   * Constructs a new instance of the LoginController.
-   *
-   * @param adminDtoExceptionManager  the AdminDtoExceptionManager for handling exceptions
-   * @param adminService      the AdminServiceImpl for admin-related operations
-   * @param passwordEncoder   the BCryptPasswordEncoder for encoding passwords
-   */
-  @Autowired
-  public AuthController(AdminDtoExceptionManager adminDtoExceptionManager,
-                        AdminServiceImpl adminService,
-                        BCryptPasswordEncoder passwordEncoder) {
-    this.adminDtoExceptionManager = adminDtoExceptionManager;
-    this.adminService = adminService;
-    this.passwordEncoder = passwordEncoder;
-  }
+  private final AdminDtoExceptionService adminDtoExceptionService;
+  private final BCryptPasswordEncoder passwordEncoder;
+  private final AdminService adminService;
 
   @GetMapping("/login")
   public String login(Model model) {
@@ -57,10 +40,6 @@ public class AuthController {
   @RequestMapping("/index")
   public String home(Model model) {
     model.addAttribute("title", "Home Page");
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
-      return "redirect:/login";
-    }
     return "index";
   }
 
@@ -95,21 +74,16 @@ public class AuthController {
   public String addNewAdmin(@Valid @ModelAttribute("adminDto") AdminDto adminDto,
                             BindingResult result, Model model) {
 
-    adminDtoExceptionManager.validate(adminDto, result, model);
+    adminDtoExceptionService.validate(adminDto, result, model);
 
-    try {
-      if (result.hasErrors() || model.containsAttribute("emailError")
-          || model.containsAttribute("passwordError")) {
-        return "register";
-      } else {
-        adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
-        adminService.createAdmin(adminDto);
-        model.addAttribute("success", "Register successfully!");
-        model.addAttribute("adminDto", adminDto);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      model.addAttribute("errors", "The server has been wrong!");
+    if (result.hasErrors() || model.containsAttribute("emailError")
+        || model.containsAttribute("passwordError")) {
+      return "register";
+    } else {
+      adminDto.setPassword(passwordEncoder.encode(adminDto.getPassword()));
+      adminService.createAdmin(adminDto);
+      model.addAttribute("success", "Register successfully!");
+      model.addAttribute("adminDto", adminDto);
     }
     return "register";
   }

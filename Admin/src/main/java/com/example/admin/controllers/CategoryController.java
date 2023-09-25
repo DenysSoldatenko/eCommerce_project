@@ -1,12 +1,11 @@
 package com.example.admin.controllers;
 
-import com.example.admin.utils.CategoryExceptionManager;
+import com.example.admin.validations.CategoryExceptionService;
 import com.example.library.models.Category;
 import com.example.library.services.CategoryService;
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,31 +22,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * Controller class for handling category-related operations.
  */
 @Controller
+@RequiredArgsConstructor
 public class CategoryController {
 
   private final CategoryService categoryService;
-  private final CategoryExceptionManager categoryExceptionManager;
-
-  @Autowired
-  public CategoryController(CategoryService categoryService,
-                            CategoryExceptionManager categoryExceptionManager) {
-    this.categoryService = categoryService;
-    this.categoryExceptionManager = categoryExceptionManager;
-  }
+  private final CategoryExceptionService categoryExceptionService;
 
   /**
    * Handles the request for displaying categories.
    *
    * @param model     the model to be populated with attributes
-   * @param principal the principal object representing the authenticated user
    * @return the view name for displaying categories
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/categories")
-  public String categories(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+  public String categories(Model model) {
     List<Category> categories = categoryService.findAllCategories();
     model.addAttribute("categories", categories);
     model.addAttribute("size", categories.size());
@@ -59,15 +48,11 @@ public class CategoryController {
    * Displays the form for adding a new category.
    *
    * @param model     the model to be populated with attributes
-   * @param principal the principal object representing the authenticated user
    * @return the view name for adding a new category
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/add-category")
-  public String addCategoryForm(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+  public String addCategoryForm(Model model) {
     model.addAttribute("categoryNew", new Category());
     return "add-category";
   }
@@ -82,13 +67,13 @@ public class CategoryController {
   @PostMapping("/add-category")
   public String addCategory(@ModelAttribute("categoryNew") Category category,
                            RedirectAttributes attributes) {
-    categoryExceptionManager.validate(category);
+    categoryExceptionService.validate(category);
 
-    if (Objects.equals(categoryExceptionManager.getMessage(), "")) {
+    if (Objects.equals(categoryExceptionService.getErrorMessage(), "")) {
       categoryService.createCategory(category);
       attributes.addFlashAttribute("success", "Added successfully");
     } else {
-      attributes.addFlashAttribute("fail", categoryExceptionManager.getMessage());
+      attributes.addFlashAttribute("fail", categoryExceptionService.getErrorMessage());
       return "redirect:/add-category";
     }
     return "redirect:/categories";
@@ -99,15 +84,11 @@ public class CategoryController {
    *
    * @param id        the ID of the category to update
    * @param model     the model to be populated with attributes
-   * @param principal the principal object representing the authenticated user
    * @return the view name for updating the category
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/update-category/{id}")
-  public String updateCategoryForm(@PathVariable("id") Long id, Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+  public String updateCategoryForm(@PathVariable("id") Long id, Model model) {
     model.addAttribute("title", "Update categories");
     Category category = categoryService.findCategoryById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -125,13 +106,13 @@ public class CategoryController {
    */
   @PostMapping("/update-category/{id}")
   public String updateCategory(Category category, RedirectAttributes attributes) {
-    categoryExceptionManager.validate(category);
+    categoryExceptionService.validate(category);
 
-    if (Objects.equals(categoryExceptionManager.getMessage(), "")) {
+    if (Objects.equals(categoryExceptionService.getErrorMessage(), "")) {
       categoryService.updateCategory(category);
       attributes.addFlashAttribute("success", "Updated successfully");
     } else {
-      attributes.addFlashAttribute("fail", categoryExceptionManager.getMessage());
+      attributes.addFlashAttribute("fail", categoryExceptionService.getErrorMessage());
       return "redirect:/update-category/{id}";
     }
     return "redirect:/categories";
@@ -146,13 +127,8 @@ public class CategoryController {
    */
   @RequestMapping(value = "/delete-category/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String deleteCategory(@PathVariable Long id, RedirectAttributes attributes) {
-    try {
-      categoryService.deleteCategoryById(id);
-      attributes.addFlashAttribute("success", "Deleted successfully");
-    } catch (Exception e) {
-      e.printStackTrace();
-      attributes.addFlashAttribute("fail", "Failed to deleted");
-    }
+    categoryService.deleteCategoryById(id);
+    attributes.addFlashAttribute("success", "Deleted successfully");
     return "redirect:/categories";
   }
 
@@ -165,13 +141,8 @@ public class CategoryController {
    */
   @RequestMapping(value = "/enable-category/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String enableCategory(@PathVariable Long id, RedirectAttributes attributes) {
-    try {
-      categoryService.enableCategoryById(id);
-      attributes.addFlashAttribute("success", "Enabled successfully");
-    } catch (Exception e) {
-      e.printStackTrace();
-      attributes.addFlashAttribute("fail", "Failed to enabled");
-    }
+    categoryService.enableCategoryById(id);
+    attributes.addFlashAttribute("success", "Enabled successfully");
     return "redirect:/categories";
   }
 }

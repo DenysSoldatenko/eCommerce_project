@@ -1,16 +1,15 @@
 package com.example.admin.controllers;
 
-import com.example.admin.utils.ProductDtoExceptionManager;
+import com.example.admin.validations.ProductDtoExceptionService;
 import com.example.library.dtos.ProductDto;
 import com.example.library.models.Category;
 import com.example.library.models.Product;
 import com.example.library.services.CategoryService;
 import com.example.library.services.ProductService;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,43 +27,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * Controller for managing products.
  */
 @Controller
+@RequiredArgsConstructor
 public class ProductController {
 
   private final ProductService productService;
-
   private final CategoryService categoryService;
-
-  private final ProductDtoExceptionManager productDtoExceptionManager;
-
-  /**
-   * Constructs a new ProductController with the specified services and exception manager.
-   *
-   * @param productService           the ProductService to be used
-   * @param categoryService          the CategoryService to be used
-   * @param productDtoExceptionManager the ProductDtoExceptionManager to be used
-   */
-  @Autowired
-  public ProductController(ProductService productService,
-                           CategoryService categoryService,
-                           ProductDtoExceptionManager productDtoExceptionManager) {
-    this.productService = productService;
-    this.categoryService = categoryService;
-    this.productDtoExceptionManager = productDtoExceptionManager;
-  }
+  private final ProductDtoExceptionService productDtoExceptionService;
 
   /**
    * Handles the request for displaying all products.
    *
    * @param model     the model to be populated with attributes
-   * @param principal the principal object representing the authenticated user
    * @return the view name for displaying products
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/products")
-  public String products(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+  public String products(Model model) {
     List<ProductDto> productDtoList = productService.findAll();
     model.addAttribute("title", "Manage Product");
     model.addAttribute("products", productDtoList);
@@ -76,15 +54,11 @@ public class ProductController {
    * Displays the form for adding a new product.
    *
    * @param model     the model to be populated with attributes
-   * @param principal the principal object representing the authenticated user
    * @return the view name for adding a new product
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/add-product")
-  public String addProductForm(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+  public String addProductForm(Model model) {
     List<Category> categories = categoryService.findActivatedCategories();
     model.addAttribute("categories", categories);
     model.addAttribute("productNew", new ProductDto());
@@ -103,12 +77,12 @@ public class ProductController {
   public String addProduct(@ModelAttribute("productNew") ProductDto productDto,
                            @RequestParam("imageProduct") MultipartFile imageProduct,
                            RedirectAttributes attributes) throws IOException {
-    productDtoExceptionManager.validate(productDto, imageProduct);
-    if (Objects.equals(productDtoExceptionManager.getMessage(), "")) {
+    productDtoExceptionService.validate(productDto, imageProduct);
+    if (Objects.equals(productDtoExceptionService.getErrorMessage(), "")) {
       productService.createProduct(imageProduct, productDto);
       attributes.addFlashAttribute("success", "Added successfully");
     } else {
-      attributes.addFlashAttribute("fail", productDtoExceptionManager.getMessage());
+      attributes.addFlashAttribute("fail", productDtoExceptionService.getErrorMessage());
       return "redirect:/add-product";
     }
     return "redirect:/products/0";
@@ -119,18 +93,14 @@ public class ProductController {
    *
    * @param id         the ID of the product to update
    * @param model      the model to be populated with attributes
-   * @param principal  the principal object representing the authenticated user
    * @return the view name for updating the product
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/update-product/{id}")
-  public String updateProductForm(@PathVariable("id") Long id, Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
-    model.addAttribute("title", "Update products");
+  public String updateProductForm(@PathVariable("id") Long id, Model model) {
     List<Category> categories = categoryService.findActivatedCategories();
     ProductDto productDto = productService.findProductDetailsById(id);
+    model.addAttribute("title", "Update products");
     model.addAttribute("categories", categories);
     model.addAttribute("productDto", productDto);
     return "update-product";
@@ -149,12 +119,12 @@ public class ProductController {
   public String updateProduct(@ModelAttribute("productDto") ProductDto productDto,
                               @RequestParam("imageProduct")MultipartFile imageProduct,
                               RedirectAttributes attributes) throws IOException {
-    productDtoExceptionManager.validate(productDto, imageProduct);
-    if (Objects.equals(productDtoExceptionManager.getMessage(), "")) {
+    productDtoExceptionService.validate(productDto, imageProduct);
+    if (Objects.equals(productDtoExceptionService.getErrorMessage(), "")) {
       productService.updateProduct(imageProduct, productDto);
       attributes.addFlashAttribute("success", "Updated successfully");
     } else {
-      attributes.addFlashAttribute("fail", productDtoExceptionManager.getMessage());
+      attributes.addFlashAttribute("fail", productDtoExceptionService.getErrorMessage());
       return "redirect:/update-product/{id}";
     }
     return "redirect:/products/0";
@@ -169,13 +139,8 @@ public class ProductController {
    */
   @RequestMapping(value = "/enable-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String enabledProduct(@PathVariable("id")Long id, RedirectAttributes attributes) {
-    try {
-      productService.enableProductById(id);
-      attributes.addFlashAttribute("success", "Enabled successfully!");
-    } catch (Exception e) {
-      e.printStackTrace();
-      attributes.addFlashAttribute("fail", "Failed to enabled!");
-    }
+    productService.enableProductById(id);
+    attributes.addFlashAttribute("success", "Enabled successfully!");
     return "redirect:/products/0";
   }
 
@@ -188,13 +153,8 @@ public class ProductController {
    */
   @RequestMapping(value = "/delete-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
   public String deletedProduct(@PathVariable("id") Long id, RedirectAttributes attributes) {
-    try {
-      productService.deleteProductById(id);
-      attributes.addFlashAttribute("success", "Deleted successfully!");
-    } catch (Exception e) {
-      e.printStackTrace();
-      attributes.addFlashAttribute("error", "Failed to deleted");
-    }
+    productService.deleteProductById(id);
+    attributes.addFlashAttribute("success", "Deleted successfully!");
     return "redirect:/products/0";
   }
 
@@ -203,15 +163,11 @@ public class ProductController {
    *
    * @param pageNo     the page number
    * @param model      the model to be populated with attributes
-   * @param principal  the principal object representing the authenticated user
    * @return the view name for displaying the product page
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/products/{pageNo}")
-  public String productPage(@PathVariable("pageNo") int pageNo, Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+  public String productPage(@PathVariable("pageNo") int pageNo, Model model) {
     Page<Product> products = productService.findAllProductsPaginated(pageNo);
     model.addAttribute("title", "Manage Product");
     model.addAttribute("size", products.getSize());
@@ -227,17 +183,13 @@ public class ProductController {
    * @param pageNo     the page number
    * @param keyword    the search keyword
    * @param model      the model to be populated with attributes
-   * @param principal  the principal object representing the authenticated user
    * @return the view name for displaying the search result
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/search-result/{pageNo}")
   public String searchProducts(@PathVariable("pageNo")int pageNo,
                                @RequestParam("keyword") String keyword,
-                               Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
+                               Model model) {
     Page<Product> products = productService.findAllProductsPaginatedBySearch(pageNo, keyword);
     model.addAttribute("title", "Search Result");
     model.addAttribute("products", products);

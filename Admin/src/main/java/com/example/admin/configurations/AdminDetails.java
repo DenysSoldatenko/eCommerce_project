@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdminDetails implements UserDetails {
 
-  private final Admin admin = new Admin();
+  private final transient Admin admin = new Admin();
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

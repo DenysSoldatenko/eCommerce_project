@@ -1,7 +1,7 @@
 package com.example.admin.configurations;
 
 import com.example.library.repositories.AdminRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,13 +19,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class AdminConfiguration {
-  private final AdminRepository adminRepository;
 
-  @Autowired
-  public AdminConfiguration(AdminRepository adminRepository) {
-    this.adminRepository = adminRepository;
-  }
+  private final AdminRepository adminRepository;
 
   @Bean
   public UserDetailsService userDetailsService() {
@@ -66,8 +63,10 @@ public class AdminConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .authorizeRequests(authorize -> authorize.requestMatchers("/*").permitAll()
-        .requestMatchers("/admin/*").hasAuthority("ADMIN"))
+        .authorizeHttpRequests(authorize -> authorize
+        .requestMatchers("/login", "/register", "/vendor/**", "/js/**", "/css/**").permitAll()
+        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+        .anyRequest().authenticated())
         .formLogin(form -> form.loginPage("/login")
         .loginProcessingUrl("/do-login")
         .defaultSuccessUrl("/index")

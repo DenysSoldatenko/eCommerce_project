@@ -1,47 +1,49 @@
-package com.example.admin.utils;
+package com.example.admin.validations.impl;
 
+import com.example.admin.validations.CategoryExceptionService;
 import com.example.library.models.Category;
 import com.example.library.services.CategoryService;
 import java.util.Optional;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Utility class for handling exceptions related to the Category.
  */
 @Component
-@Getter
-public class CategoryExceptionManager {
-  private final CategoryService categoryService;
-  private String message;
+@RequiredArgsConstructor
+public class CategoryExceptionServiceImpl implements CategoryExceptionService {
 
-  @Autowired
-  public CategoryExceptionManager(CategoryService categoryService) {
-    this.categoryService = categoryService;
-  }
+  private final CategoryService categoryService;
+
+  @Getter
+  private String errorMessage;
 
   /**
    * Validates the given Category object for any potential exceptions.
    *
    * @param category the Category object to be validated
    */
+  @Override
   public void validate(Category category) {
-    message = "";
+    errorMessage = "";
     handleEmptyName(category);
     handleDuplicateName(category);
   }
 
-  private void handleEmptyName(Category category) {
+  @Override
+  public void handleEmptyName(Category category) {
     if (category.getName() == null || category.getName().equals("")) {
-      message = "Failed to perform because empty name";
+      errorMessage = "Failed to perform because of a empty name";
     }
   }
 
-  private void handleDuplicateName(Category category) {
+  @Override
+  public void handleDuplicateName(Category category) {
     Optional<Category> cat = categoryService.findCategoryByName(category.getName());
     if (cat.isPresent()) {
-      message = "Failed to perform because duplicate name";
+      errorMessage = "Failed to perform because of a duplicate name";
     }
   }
 }

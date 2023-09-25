@@ -1,9 +1,10 @@
-package com.example.admin.utils;
+package com.example.admin.validations.impl;
 
+import com.example.admin.validations.ProductDtoExceptionService;
 import com.example.library.dtos.ProductDto;
 import com.example.library.services.ProductService;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,15 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
  * Utility class for handling exceptions related to the Product.
  */
 @Component
-@Getter
-public class ProductDtoExceptionManager {
-  private final ProductService productService;
-  private String message;
+@RequiredArgsConstructor
+public class ProductDtoExceptionServiceImpl implements ProductDtoExceptionService {
 
-  @Autowired
-  public ProductDtoExceptionManager(ProductService productService) {
-    this.productService = productService;
-  }
+  private final ProductService productService;
+
+  @Getter
+  private String errorMessage;
 
   /**
    * Validates the product and image file for any empty or invalid fields.
@@ -27,8 +26,9 @@ public class ProductDtoExceptionManager {
    * @param product       the product DTO to validate
    * @param imageProduct  the image file to validate
    */
+  @Override
   public void validate(ProductDto product, MultipartFile imageProduct) {
-    message = "";
+    errorMessage = "";
     handleEmptyName(product);
     handleEmptyCategory(product);
     handleEmptyQuantity(product);
@@ -36,49 +36,54 @@ public class ProductDtoExceptionManager {
     handleEmptyImage(product, imageProduct);
   }
 
-  private void handleEmptyName(ProductDto product) {
+  @Override
+  public void handleEmptyName(ProductDto product) {
     if (product.getName() == null || product.getName().equals("")) {
-      message = "Failed to perform because empty name";
+      errorMessage = "Failed to perform because empty name";
     }
   }
 
-  private void handleEmptyCategory(ProductDto product) {
+  @Override
+  public void handleEmptyCategory(ProductDto product) {
     if (product.getCategory() == null) {
-      message = "Failed to perform because empty category";
+      errorMessage = "Failed to perform because empty category";
     }
   }
 
-  private void handleEmptyQuantity(ProductDto product) {
+  @Override
+  public void handleEmptyQuantity(ProductDto product) {
     try {
       int quantity = Integer.parseInt(String.valueOf(product.getCurrentQuantity()));
       if (quantity <= 0) {
-        message = "Failed to perform because of an invalid quantity";
+        errorMessage = "Failed to perform because of an invalid quantity";
       }
     } catch (NumberFormatException e) {
-      message = "Failed to perform because the quantity is not a valid number";
+      errorMessage = "Failed to perform because the quantity is not a valid number";
     }
   }
 
-  private void handleEmptyPrice(ProductDto product) {
+  @Override
+  public void handleEmptyPrice(ProductDto product) {
     try {
       double price = Double.parseDouble(String.valueOf(product.getCostPrice()));
       if (price <= 0) {
-        message = "Failed to perform because of an invalid price";
+        errorMessage = "Failed to perform because of an invalid price";
       }
     } catch (NumberFormatException e) {
-      message = "Failed to perform because the price is not a valid number";
+      errorMessage = "Failed to perform because the price is not a valid number";
     }
   }
 
-  private void handleEmptyImage(ProductDto productDto, MultipartFile imageProduct) {
+  @Override
+  public void handleEmptyImage(ProductDto productDto, MultipartFile imageProduct) {
     if (productDto.getId() == null) {
       if (imageProduct.isEmpty()) {
-        message = "Failed to perform create action because empty image";
+        errorMessage = "Failed to perform create action because empty image";
       }
     } else {
       ProductDto product = productService.findProductDetailsById(productDto.getId());
       if (imageProduct.isEmpty() && product.getImage().isEmpty()) {
-        message = "Failed to perform update action because empty image";
+        errorMessage = "Failed to perform update action because empty image";
       }
     }
   }
