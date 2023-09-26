@@ -7,7 +7,7 @@ import com.example.library.services.ProductService;
 import com.example.library.utils.ImageManager;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -26,10 +26,9 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @AllArgsConstructor
 public class ProductServiceImpl implements ProductService {
+
   private final ProductRepository productRepository;
-
   private final ImageManager imageManager;
-
   private final ModelMapper modelMapper;
 
   @Override
@@ -38,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
 
     return products.stream()
     .map(product -> modelMapper.map(product, ProductDto.class))
-    .collect(Collectors.toList());
+    .toList();
   }
 
   @Override
@@ -51,13 +50,13 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public void updateProduct(MultipartFile imageProduct, ProductDto productDto) throws IOException {
-    Product product = productRepository.findById(productDto.getId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-        "Product not found with id: " + productDto.getId()));
+    Optional<Product> product = productRepository.findById(productDto.getId());
 
-    imageManager.handleImageOnUpdateOperation(product, imageProduct);
-    mapProductDtoToProduct(productDto, product);
-    productRepository.save(product);
+    if (product.isPresent()) {
+      imageManager.handleImageOnUpdateOperation(product.get(), imageProduct);
+      mapProductDtoToProduct(productDto, product.get());
+      productRepository.save(product.get());
+    }
   }
 
   @Override

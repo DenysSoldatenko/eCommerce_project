@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DeliveryDateManager {
+
   private static final int STANDARD_DELIVERY_DAYS = 1;
   private static final int LONG_DELIVERY_DAYS = 7;
   private static final int HIGH_PRODUCT_COUNT_THRESHOLD = 5;

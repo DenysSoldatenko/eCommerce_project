@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Component
 public class ImageManager {
-  private final String uploadFolder = "Admin/src/main/resources/static/img/image-product";
+  private static final String UPLOAD_FOLDER = "Admin/src/main/resources/static/img/image-product";
 
   /**
    * Uploads an image file.
@@ -28,7 +28,7 @@ public class ImageManager {
   public boolean uploadImage(MultipartFile imageProduct) {
     try {
       Files.copy(imageProduct.getInputStream(),
-          Paths.get(uploadFolder, imageProduct.getOriginalFilename()),
+          Paths.get(UPLOAD_FOLDER, imageProduct.getOriginalFilename()),
           StandardCopyOption.REPLACE_EXISTING);
       log.info("Image uploaded: {} ", imageProduct.getOriginalFilename());
       return true;
@@ -47,7 +47,7 @@ public class ImageManager {
   public boolean isImageFileAlreadyUploaded(MultipartFile imageProduct) {
     boolean isExisted = false;
     try {
-      File file = new File(uploadFolder + "\\" + imageProduct.getOriginalFilename());
+      File file = new File(UPLOAD_FOLDER + File.separator + imageProduct.getOriginalFilename());
       isExisted = file.exists();
       log.info("Image existed: {} ", imageProduct.getOriginalFilename());
     } catch (Exception e) {
@@ -90,7 +90,7 @@ public class ImageManager {
                                            MultipartFile imageProduct) throws IOException {
     if (imageProduct != null) {
       if (uploadImage(imageProduct)) {
-        System.out.println("Upload successfully");
+        log.info("Upload successfully");
       }
       product.setImage(Base64.getEncoder().encodeToString(imageProduct.getBytes()));
     }

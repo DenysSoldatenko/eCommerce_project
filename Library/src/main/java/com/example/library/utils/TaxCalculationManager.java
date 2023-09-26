@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TaxCalculationManager {
+
   private static final double STANDARD_TAX_RATE = 0.05;
   private static final double HIGH_TAX_RATE = 0.1;
   private static final int HIGH_PRODUCT_COUNT_THRESHOLD = 10;
