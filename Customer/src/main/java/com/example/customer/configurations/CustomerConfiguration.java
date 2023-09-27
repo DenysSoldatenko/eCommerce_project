@@ -64,7 +64,7 @@ public class CustomerConfiguration {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers("/login", "/register", "/vendor/**", "/js/**", "/css/**").permitAll()
+        .requestMatchers("/login", "/do-register", "/register", "/vendor/**", "/js/**", "/css/**").permitAll()
         .requestMatchers("/shop/**").hasAuthority("CUSTOMER")
         .anyRequest().authenticated())
         .formLogin(form -> form.loginPage("/login")

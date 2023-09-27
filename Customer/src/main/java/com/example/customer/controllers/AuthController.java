@@ -49,18 +49,13 @@ public class AuthController {
 
     authExceptionsService.validate(customerDto, result, model);
 
-    try {
-      if (result.hasErrors() || model.containsAttribute("emailError")
-          || model.containsAttribute("passwordError")) {
-        return "register";
-      } else {
-        customerDto.setPassword(passwordEncoder.encode(customerDto.getPassword()));
-        customerService.createCustomerDto(customerDto);
-        model.addAttribute("success", "Register successfully");
-      }
-    } catch (Exception e) {
-      model.addAttribute("error", "Server have ran some problems");
-      model.addAttribute("customerDto", customerDto);
+    if (result.hasErrors() || model.containsAttribute("emailError")
+        || model.containsAttribute("passwordError")) {
+      return "register";
+    } else {
+      customerDto.setPassword(passwordEncoder.encode(customerDto.getPassword()));
+      customerService.createCustomerDto(customerDto);
+      model.addAttribute("success", "Register successfully");
     }
     return "register";
   }
