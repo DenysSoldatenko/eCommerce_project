@@ -5,8 +5,8 @@ import com.example.library.models.Category;
 import com.example.library.services.CategoryService;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -90,10 +89,8 @@ public class CategoryController {
   @GetMapping("/update-category/{id}")
   public String updateCategoryForm(@PathVariable("id") Long id, Model model) {
     model.addAttribute("title", "Update categories");
-    Category category = categoryService.findCategoryById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-        "Product not found with id: " + id));
-    model.addAttribute("category", category);
+    Optional<Category> categoryOptional = categoryService.findCategoryById(id);
+    categoryOptional.ifPresent(category -> model.addAttribute("category", category));
     return "update-category";
   }
 

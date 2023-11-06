@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CustomerDetails implements UserDetails {
-  private final Customer customer = new Customer();
+  private final transient Customer customer = new Customer();
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

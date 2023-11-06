@@ -1,7 +1,7 @@
 package com.example.customer.configurations;
 
 import com.example.library.repositories.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,13 +19,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class CustomerConfiguration {
-  private final CustomerRepository customerRepository;
 
-  @Autowired
-  public CustomerConfiguration(CustomerRepository customerRepository) {
-    this.customerRepository = customerRepository;
-  }
+  private final CustomerRepository customerRepository;
 
   @Bean
   public UserDetailsService userDetailsService() {
@@ -66,8 +63,10 @@ public class CustomerConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .authorizeRequests(authorize -> authorize.requestMatchers("/*").permitAll()
-        .requestMatchers("/customer/*").hasAuthority("CUSTOMER"))
+        .authorizeHttpRequests(authorize -> authorize
+        .requestMatchers("/login", "/register", "/vendor/**", "/js/**", "/css/**").permitAll()
+        .requestMatchers("/shop/**").hasAuthority("CUSTOMER")
+        .anyRequest().authenticated())
         .formLogin(form -> form.loginPage("/login")
         .loginProcessingUrl("/do-login")
         .defaultSuccessUrl("/index")

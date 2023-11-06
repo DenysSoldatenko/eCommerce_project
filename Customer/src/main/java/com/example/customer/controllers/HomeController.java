@@ -1,6 +1,6 @@
 package com.example.customer.controllers;
 
-import com.example.customer.utils.SessionAttributeSetter;
+import com.example.customer.validations.SessionAttributeSetter;
 import com.example.library.dtos.ProductDto;
 import com.example.library.models.Category;
 import com.example.library.services.CategoryService;
@@ -8,7 +8,7 @@ import com.example.library.services.ProductService;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,27 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Controller for handling home-related requests and displaying the home page.
  */
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+
   private final ProductService productService;
-
   private final CategoryService categoryService;
-
   private final SessionAttributeSetter sessionAttributeSetter;
-
-  /**
-   * Constructs a new HomeController with the specified dependencies.
-   *
-   * @param productService         the ProductService to handle product-related operations
-   * @param categoryService        the CategoryService to handle category-related operations
-   * @param sessionAttributeSetter the SessionAttributeSetter to set session attributes
-   */
-  @Autowired
-  public HomeController(ProductService productService, CategoryService categoryService,
-                        SessionAttributeSetter sessionAttributeSetter) {
-    this.productService = productService;
-    this.categoryService = categoryService;
-    this.sessionAttributeSetter = sessionAttributeSetter;
-  }
 
   @GetMapping({"/index", "/"})
   public String home(Principal principal, HttpSession session) {

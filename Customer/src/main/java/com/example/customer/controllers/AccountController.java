@@ -1,14 +1,14 @@
 package com.example.customer.controllers;
 
-import com.example.customer.utils.AuthExceptionManager;
-import com.example.customer.utils.CustomerExceptionManager;
+import com.example.customer.validations.AuthExceptionsService;
+import com.example.customer.validations.CustomerExceptionService;
 import com.example.library.dtos.CustomerDto;
 import com.example.library.models.Customer;
 import com.example.library.services.CustomerService;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,33 +24,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * Controller class for handling account-related actions.
  */
 @Controller
+@RequiredArgsConstructor
 public class AccountController {
+
   private final CustomerService customerService;
-
-  private final CustomerExceptionManager customerExceptionManager;
-
+  private final CustomerExceptionService customerExceptionService;
   private final BCryptPasswordEncoder passwordEncoder;
-
-  private final AuthExceptionManager authExceptionManager;
-
-  /**
-   * Constructs a new AccountController with the specified dependencies.
-   *
-   * @param customerService          the CustomerService to handle customer-related operations
-   * @param customerExceptionManager the CustomerExceptionManager for handling customer exceptions
-   * @param passwordEncoder          the BCryptPasswordEncoder for password encoding
-   * @param authExceptionManager     the AuthExceptionManager for handling authentication exceptions
-   */
-  @Autowired
-  public AccountController(CustomerService customerService,
-                           CustomerExceptionManager customerExceptionManager,
-                           BCryptPasswordEncoder passwordEncoder,
-                           AuthExceptionManager authExceptionManager) {
-    this.customerService = customerService;
-    this.customerExceptionManager = customerExceptionManager;
-    this.passwordEncoder = passwordEncoder;
-    this.authExceptionManager = authExceptionManager;
-  }
+  private final AuthExceptionsService authExceptionsService;
 
   /**
    * Retrieves the account home page.
@@ -61,10 +41,6 @@ public class AccountController {
    */
   @GetMapping("/account")
   public String accountHome(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
-
     String username = principal.getName();
     Customer customer = customerService.findCustomerByUsername(username);
     model.addAttribute("customer", customer);
@@ -81,13 +57,13 @@ public class AccountController {
   @RequestMapping(value = "/update-account", method = {RequestMethod.GET, RequestMethod.PUT})
   public String updateCustomer(@ModelAttribute("customer") Customer customer,
                                RedirectAttributes attributes) {
-    customerExceptionManager.validate(customer);
+    customerExceptionService.validate(customer);
 
-    if (Objects.equals(customerExceptionManager.getMessage(), "")) {
+    if (Objects.equals(customerExceptionService.getErrorMessage(), "")) {
       customerService.updateCustomerInfo(customer);
       attributes.addFlashAttribute("success", "Added successfully");
     } else {
-      attributes.addFlashAttribute("fail", customerExceptionManager.getMessage());
+      attributes.addFlashAttribute("fail", customerExceptionService.getErrorMessage());
       return "redirect:/account";
     }
     return "redirect:/account";
@@ -102,10 +78,6 @@ public class AccountController {
    */
   @GetMapping("/change-password")
   public String passwordHome(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
-
     Customer customer = customerService.findCustomerByUsername(principal.getName());
     CustomerDto customerDto = customerService.convertToDto(customer);
     model.addAttribute("customerDto", customerDto);
@@ -123,7 +95,7 @@ public class AccountController {
   @PostMapping("/update-password")
   public String updatePassword(@Valid @ModelAttribute("customerDto") CustomerDto customerDto,
                                BindingResult result, Model model) {
-    authExceptionManager.validate(customerDto, result, model);
+    authExceptionsService.validate(customerDto, result, model);
     validatePasswordAndUpdate(customerDto, result, model);
     return "change-password";
   }

@@ -1,5 +1,6 @@
 package com.example.customer.controllers;
 
+import com.example.customer.validations.SessionAttributeSetter;
 import com.example.library.models.Customer;
 import com.example.library.models.Order;
 import com.example.library.models.ShoppingCart;
@@ -9,7 +10,9 @@ import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,16 +24,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * Controller class for handling order-related actions.
  */
 @Controller
+@RequiredArgsConstructor
 public class OrderController {
 
   private final CustomerService customerService;
   private final OrderService orderService;
-  
-  @Autowired
-  public OrderController(CustomerService customerService, OrderService orderService) {
-    this.customerService = customerService;
-    this.orderService = orderService;
-  }
+  private final SessionAttributeSetter sessionAttributeSetter;
 
   /**
    * Retrieves the checkout page.
@@ -41,10 +40,6 @@ public class OrderController {
    */
   @GetMapping("/check-out")
   public String checkout(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
-
     Customer customer = customerService.findCustomerByUsername(principal.getName());
     if (customer.getPhoneNumber() == null || customer.getAddress() == null) {
       model.addAttribute("customer", customer);
@@ -68,18 +63,13 @@ public class OrderController {
    */
   @GetMapping("/orders")
   public String getOrders(Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    } else {
-      Customer customer = customerService.findCustomerByUsername(principal.getName());
-      List<Order> orderList = customer.getOrders();
-      Timestamp currentTime =  new Timestamp(new Date().getTime());
-      model.addAttribute("orders", orderList);
-      model.addAttribute("currentTime", currentTime);
-      model.addAttribute("title", "Order");
-      model.addAttribute("page", "Order");
-      return "order";
-    }
+    Customer customer = customerService.findCustomerByUsername(principal.getName());
+    List<Order> orderList = customer.getOrders();
+    model.addAttribute("orders", orderList);
+    model.addAttribute("currentTime", new Timestamp(new Date().getTime()));
+    model.addAttribute("title", "Order");
+    model.addAttribute("page", "Order");
+    return "order";
   }
 
   /**
@@ -90,15 +80,12 @@ public class OrderController {
    *         or a redirect to the login page if not authenticated
    */
   @GetMapping("/save-order")
-  public String saveOrder(Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    } else {
-      Customer customer = customerService.findCustomerByUsername(principal.getName());
-      ShoppingCart cart = customer.getCart();
-      orderService.createOrder(cart);
-      return "redirect:/orders";
-    }
+  public String saveOrder(Principal principal, HttpSession session) {
+    Customer customer = customerService.findCustomerByUsername(principal.getName());
+    ShoppingCart cart = customer.getCart();
+    orderService.createOrder(cart);
+    sessionAttributeSetter.setSessionAttributes(principal, session);
+    return "redirect:/orders";
   }
 
   /**

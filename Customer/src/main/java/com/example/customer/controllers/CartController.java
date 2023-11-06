@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,27 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
  * Controller class for handling shopping-cart-related operations.
  */
 @Controller
+@RequiredArgsConstructor
 public class CartController {
+
   private final CustomerService customerService;
-
   private final ShoppingCartService cartService;
-
   private final ProductService productService;
-
-  /**
-   * Constructs a CartController with the given dependencies.
-   *
-   * @param cartService     the ShoppingCartService used for managing shopping cart operations
-   * @param productService the ProductService used for retrieving product information
-   * @param customerService the CustomerService used for retrieving customer information
-   */
-  @Autowired
-  public CartController(ShoppingCartService cartService,
-                        ProductService productService, CustomerService customerService) {
-    this.cartService = cartService;
-    this.productService = productService;
-    this.customerService = customerService;
-  }
 
   /**
    * Handles the request for displaying the shopping cart.
@@ -54,10 +39,6 @@ public class CartController {
    */
   @GetMapping("/cart")
   public String cart(Model model, Principal principal, HttpSession session) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
-
     Customer customer = customerService.findCustomerByUsername(principal.getName());
     ShoppingCart shoppingCart = customer.getCart();
 
@@ -88,10 +69,6 @@ public class CartController {
   public String addItemToCart(@RequestParam("id") Long productId,
       @RequestParam(value = "quantity", required = false, defaultValue = "1") int quantity,
       Principal principal, HttpServletRequest request) {
-    if (principal == null) {
-      return "redirect:/login";
-    }
-
     Product product = productService.findProductById(productId);
     Customer customer = customerService.findCustomerByUsername(principal.getName());
     cartService.addItemToCart(product, quantity, customer);
@@ -114,22 +91,18 @@ public class CartController {
                            @RequestParam("id") Long productId,
                            Model model, Principal principal) {
 
-    if (principal == null) {
-      return "redirect:/login";
-    } else {
-      if (quantity > productService.findProductById(productId).getCurrentQuantity()) {
-        model.addAttribute("check", "Requested quantity exceeds available stock!");
-        return "cart";
-      }
-
-      String username = principal.getName();
-      Customer customer = customerService.findCustomerByUsername(username);
-      Product product = productService.findProductById(productId);
-      ShoppingCart cart = cartService.updateItemInCart(product, quantity, customer);
-
-      model.addAttribute("shoppingCart", cart);
-      return "redirect:/cart";
+    if (quantity > productService.findProductById(productId).getCurrentQuantity()) {
+      model.addAttribute("check", "Requested quantity exceeds available stock!");
+      return "cart";
     }
+
+    String username = principal.getName();
+    Customer customer = customerService.findCustomerByUsername(username);
+    Product product = productService.findProductById(productId);
+    ShoppingCart cart = cartService.updateItemInCart(product, quantity, customer);
+
+    model.addAttribute("shoppingCart", cart);
+    return "redirect:/cart";
   }
 
   /**
@@ -144,16 +117,12 @@ public class CartController {
   @PostMapping("/delete-cart")
   public String deleteItemFromCart(@RequestParam("id") Long productId,
                                    Model model, Principal principal) {
-    if (principal == null) {
-      return "redirect:/login";
-    } else {
-      String username = principal.getName();
-      Customer customer = customerService.findCustomerByUsername(username);
-      Product product = productService.findProductById(productId);
-      ShoppingCart cart = cartService.deleteItemFromCart(product, customer);
+    String username = principal.getName();
+    Customer customer = customerService.findCustomerByUsername(username);
+    Product product = productService.findProductById(productId);
+    ShoppingCart cart = cartService.deleteItemFromCart(product, customer);
 
-      model.addAttribute("shoppingCart", cart);
-      return "redirect:/cart";
-    }
+    model.addAttribute("shoppingCart", cart);
+    return "redirect:/cart";
   }
 }

@@ -1,10 +1,10 @@
 package com.example.customer.controllers;
 
-import com.example.customer.utils.AuthExceptionManager;
+import com.example.customer.validations.AuthExceptionsService;
 import com.example.library.dtos.CustomerDto;
 import com.example.library.services.CustomerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,38 +12,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Controller class for handling authentication-related operations.
  */
 @Controller
+@RequiredArgsConstructor
 public class AuthController {
 
   private final CustomerService customerService;
-
   private final BCryptPasswordEncoder passwordEncoder;
+  private final AuthExceptionsService authExceptionsService;
 
-  private final AuthExceptionManager authExceptionManager;
-
-  /**
-   * Constructs an AuthController with the specified dependencies.
-   *
-   * @param customerService             the CustomerService implementation
-   * @param passwordEncoder             the BCryptPasswordEncoder for password encoding
-   * @param authExceptionManager the CustomerDtoExceptionManager for exception handling
-   */
-  @Autowired
-  public AuthController(CustomerService customerService,
-                        BCryptPasswordEncoder passwordEncoder,
-                        AuthExceptionManager authExceptionManager) {
-    this.customerService = customerService;
-    this.passwordEncoder = passwordEncoder;
-    this.authExceptionManager = authExceptionManager;
-  }
-
-  @RequestMapping(value = "/login", method = RequestMethod.GET)
+  @GetMapping("/login")
   public String login() {
     return "login";
   }
@@ -66,7 +47,7 @@ public class AuthController {
   public String processRegister(@Valid @ModelAttribute("customerDto") CustomerDto customerDto,
       BindingResult result, Model model) {
 
-    authExceptionManager.validate(customerDto, result, model);
+    authExceptionsService.validate(customerDto, result, model);
 
     try {
       if (result.hasErrors() || model.containsAttribute("emailError")

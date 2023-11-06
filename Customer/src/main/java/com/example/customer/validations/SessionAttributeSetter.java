@@ -1,24 +1,21 @@
-package com.example.customer.utils;
+package com.example.customer.validations;
 
 import com.example.library.models.Customer;
 import com.example.library.models.ShoppingCart;
 import com.example.library.services.CustomerService;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Utility class for setting session attributes.
  */
 @Component
+@RequiredArgsConstructor
 public class SessionAttributeSetter {
-  private final CustomerService customerService;
 
-  @Autowired
-  public SessionAttributeSetter(CustomerService customerService) {
-    this.customerService = customerService;
-  }
+  private final CustomerService customerService;
 
   /**
    * Sets session attributes based on shopping cart items.

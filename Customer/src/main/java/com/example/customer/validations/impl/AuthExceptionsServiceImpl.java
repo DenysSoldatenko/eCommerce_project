@@ -1,9 +1,10 @@
-package com.example.customer.utils;
+package com.example.customer.validations.impl;
 
+import com.example.customer.validations.AuthExceptionsService;
 import com.example.library.dtos.CustomerDto;
 import com.example.library.models.Customer;
 import com.example.library.services.implementations.CustomerServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,14 +13,10 @@ import org.springframework.validation.BindingResult;
  * Utility class for handling exceptions related to the authentication process.
  */
 @Component
-public class AuthExceptionManager {
+@RequiredArgsConstructor
+public class AuthExceptionsServiceImpl implements AuthExceptionsService {
 
   private final CustomerServiceImpl customerService;
-
-  @Autowired
-  public AuthExceptionManager(CustomerServiceImpl customerService) {
-    this.customerService = customerService;
-  }
 
   /**
    * Validates the CustomerDto and handles any binding result errors.
@@ -28,6 +25,7 @@ public class AuthExceptionManager {
    * @param result      the BindingResult containing validation errors
    * @param model       the model to be populated with attributes
    */
+  @Override
   public void validate(CustomerDto customerDto, BindingResult result, Model model) {
     handleException(customerDto, result, model);
     handleEmail(customerDto, model);
@@ -41,13 +39,15 @@ public class AuthExceptionManager {
    * @param result      the BindingResult object containing validation errors
    * @param model       the model to be populated with attributes
    */
-  private void handleException(CustomerDto customerDto, BindingResult result, Model model) {
+  @Override
+  public void handleException(CustomerDto customerDto, BindingResult result, Model model) {
     if (result.hasErrors()) {
       model.addAttribute("customerDto", customerDto);
     }
   }
 
-  private void handleEmail(CustomerDto customerDto, Model model) {
+  @Override
+  public void handleEmail(CustomerDto customerDto, Model model) {
     String emailPattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     String username = customerDto.getUsername();
 
@@ -70,7 +70,8 @@ public class AuthExceptionManager {
    * @param customerDto the CustomerDto containing the password to validate
    * @param model       the model to be populated with attributes
    */
-  private void handlePassword(CustomerDto customerDto, Model model) {
+  @Override
+  public void handlePassword(CustomerDto customerDto, Model model) {
     if (!customerDto.getPassword().equals(customerDto.getRepeatPassword())) {
       model.addAttribute("passwordError", "Your password may be wrong! Check again!");
       model.addAttribute("customerDto", customerDto);
