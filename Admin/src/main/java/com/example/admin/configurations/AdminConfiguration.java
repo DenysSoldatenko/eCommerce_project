@@ -24,6 +24,15 @@ public class AdminConfiguration {
 
   private final AdminRepository adminRepository;
 
+  private static final String[] PUBLIC_ROUTES = {
+    "/login",
+    "/register-new",
+    "/register",
+    "/vendor/**",
+    "/js/**",
+    "/css/**"
+  };
+
   @Bean
   public UserDetailsService userDetailsService() {
     return new AdminServiceConfig(adminRepository);
@@ -63,19 +72,30 @@ public class AdminConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers("/login", "/register-new", "/register", "/vendor/**", "/js/**", "/css/**").permitAll()
-        .requestMatchers("/admin/**").hasAuthority("ADMIN")
-        .anyRequest().authenticated())
-        .formLogin(form -> form.loginPage("/login")
-        .loginProcessingUrl("/do-login")
-        .defaultSuccessUrl("/index")
-        .permitAll())
-        .logout(logout -> logout.invalidateHttpSession(true)
-        .clearAuthentication(true)
-        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-        .logoutSuccessUrl("/login?logout")
-        .permitAll());
+        .authorizeHttpRequests(
+          authorizeHttpRequests ->
+            authorizeHttpRequests
+              .requestMatchers(PUBLIC_ROUTES).permitAll()
+              .requestMatchers("/admin/**").hasAuthority("ADMIN")
+              .anyRequest().authenticated()
+        )
+        .formLogin(
+          formLoginConfigurer ->
+            formLoginConfigurer
+              .loginPage("/login")
+              .loginProcessingUrl("/do-login")
+              .defaultSuccessUrl("/index")
+              .permitAll()
+        )
+        .logout(
+          logoutConfigurer ->
+            logoutConfigurer
+              .invalidateHttpSession(true)
+              .clearAuthentication(true)
+              .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+              .logoutSuccessUrl("/login?logout")
+              .permitAll()
+        );
 
     return http.build();
   }

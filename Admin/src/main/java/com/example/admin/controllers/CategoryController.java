@@ -1,5 +1,8 @@
 package com.example.admin.controllers;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import com.example.admin.validations.CategoryExceptionService;
 import com.example.library.models.Category;
 import com.example.library.services.CategoryService;
@@ -14,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -64,8 +66,10 @@ public class CategoryController {
    * @return a redirect to the category page after adding the category
    */
   @PostMapping("/add-category")
-  public String addCategory(@ModelAttribute("categoryNew") Category category,
-                           RedirectAttributes attributes) {
+  public String addCategory(
+      @ModelAttribute("categoryNew") Category category,
+      RedirectAttributes attributes
+  ) {
     categoryExceptionService.validate(category);
 
     if (Objects.equals(categoryExceptionService.getErrorMessage(), "")) {
@@ -122,7 +126,7 @@ public class CategoryController {
    * @param attributes the redirect attributes to add flash attributes
    * @return a redirect to the category page after deleting the category
    */
-  @RequestMapping(value = "/delete-category/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
+  @RequestMapping(value = "/delete-category/{id}", method = {PUT, GET})
   public String deleteCategory(@PathVariable Long id, RedirectAttributes attributes) {
     categoryService.deleteCategoryById(id);
     attributes.addFlashAttribute("success", "Deleted successfully");
@@ -136,7 +140,7 @@ public class CategoryController {
    * @param attributes the redirect attributes to add flash attributes
    * @return a redirect to the category page after enabling the category
    */
-  @RequestMapping(value = "/enable-category/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
+  @RequestMapping(value = "/enable-category/{id}", method = {PUT, GET})
   public String enableCategory(@PathVariable Long id, RedirectAttributes attributes) {
     categoryService.enableCategoryById(id);
     attributes.addFlashAttribute("success", "Enabled successfully");

@@ -71,8 +71,10 @@ public class AuthController {
    * @return the register view name
    */
   @PostMapping("/register-new")
-  public String addNewAdmin(@Valid @ModelAttribute("adminDto") AdminDto adminDto,
-                            BindingResult result, Model model) {
+  public String addNewAdmin(
+      @Valid @ModelAttribute("adminDto") AdminDto adminDto,
+      BindingResult result, Model model
+  ) {
 
     adminDtoExceptionService.validate(adminDto, result, model);
 

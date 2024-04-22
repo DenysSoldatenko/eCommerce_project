@@ -1,5 +1,8 @@
 package com.example.admin.controllers;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import com.example.admin.validations.ProductDtoExceptionService;
 import com.example.library.dtos.ProductDto;
 import com.example.library.models.Category;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -74,9 +76,11 @@ public class ProductController {
    * @return a redirect to the product page after adding the product
    */
   @PostMapping("/add-product")
-  public String addProduct(@ModelAttribute("productNew") ProductDto productDto,
-                           @RequestParam("imageProduct") MultipartFile imageProduct,
-                           RedirectAttributes attributes) throws IOException {
+  public String addProduct(
+      @ModelAttribute("productNew") ProductDto productDto,
+      @RequestParam("imageProduct") MultipartFile imageProduct,
+      RedirectAttributes attributes
+  ) throws IOException {
     productDtoExceptionService.validate(productDto, imageProduct);
     if (Objects.equals(productDtoExceptionService.getErrorMessage(), "")) {
       productService.createProduct(imageProduct, productDto);
@@ -116,9 +120,11 @@ public class ProductController {
    * @return a redirect to the product page after updating the product
    */
   @PostMapping("/update-product/{id}")
-  public String updateProduct(@ModelAttribute("productDto") ProductDto productDto,
-                              @RequestParam("imageProduct")MultipartFile imageProduct,
-                              RedirectAttributes attributes) throws IOException {
+  public String updateProduct(
+      @ModelAttribute("productDto") ProductDto productDto,
+      @RequestParam("imageProduct")MultipartFile imageProduct,
+      RedirectAttributes attributes
+  ) throws IOException {
     productDtoExceptionService.validate(productDto, imageProduct);
     if (Objects.equals(productDtoExceptionService.getErrorMessage(), "")) {
       productService.updateProduct(imageProduct, productDto);
@@ -137,7 +143,7 @@ public class ProductController {
    * @param attributes the redirect attributes to add flash attributes
    * @return a redirect to the product page after enabling the product
    */
-  @RequestMapping(value = "/enable-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
+  @RequestMapping(value = "/enable-product/{id}", method = {PUT, GET})
   public String enabledProduct(@PathVariable("id")Long id, RedirectAttributes attributes) {
     productService.enableProductById(id);
     attributes.addFlashAttribute("success", "Enabled successfully!");
@@ -151,7 +157,7 @@ public class ProductController {
    * @param attributes the redirect attributes to add flash attributes
    * @return a redirect to the product page after deleting the product
    */
-  @RequestMapping(value = "/delete-product/{id}", method = {RequestMethod.PUT, RequestMethod.GET})
+  @RequestMapping(value = "/delete-product/{id}", method = {PUT, GET})
   public String deletedProduct(@PathVariable("id") Long id, RedirectAttributes attributes) {
     productService.deleteProductById(id);
     attributes.addFlashAttribute("success", "Deleted successfully!");
@@ -187,9 +193,11 @@ public class ProductController {
    *     or a redirect to the login page if not authenticated
    */
   @GetMapping("/search-result/{pageNo}")
-  public String searchProducts(@PathVariable("pageNo")int pageNo,
-                               @RequestParam("keyword") String keyword,
-                               Model model) {
+  public String searchProducts(
+      @PathVariable("pageNo")int pageNo,
+      @RequestParam("keyword") String keyword,
+      Model model
+  ) {
     Page<Product> products = productService.findAllProductsPaginatedBySearch(pageNo, keyword);
     model.addAttribute("title", "Search Result");
     model.addAttribute("products", products);
