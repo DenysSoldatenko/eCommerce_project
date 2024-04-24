@@ -24,6 +24,15 @@ public class CustomerConfiguration {
 
   private final CustomerRepository customerRepository;
 
+  private static final String[] PUBLIC_ROUTES = {
+    "/login",
+    "/do-register",
+    "/register",
+    "/vendor/**",
+    "/js/**",
+    "/css/**"
+  };
+
   @Bean
   public UserDetailsService userDetailsService() {
     return new CustomerServiceConfig(customerRepository);
@@ -63,19 +72,30 @@ public class CustomerConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers("/login", "/do-register", "/register", "/vendor/**", "/js/**", "/css/**").permitAll()
-        .requestMatchers("/shop/**").hasAuthority("CUSTOMER")
-        .anyRequest().authenticated())
-        .formLogin(form -> form.loginPage("/login")
-        .loginProcessingUrl("/do-login")
-        .defaultSuccessUrl("/index")
-        .permitAll())
-        .logout(logout -> logout.invalidateHttpSession(true)
-        .clearAuthentication(true)
-        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-        .logoutSuccessUrl("/login?logout")
-        .permitAll());
+        .authorizeHttpRequests(
+          authorizeHttpRequests ->
+            authorizeHttpRequests
+              .requestMatchers(PUBLIC_ROUTES).permitAll()
+              .requestMatchers("/shop/**").hasAuthority("CUSTOMER")
+              .anyRequest().authenticated()
+        )
+        .formLogin(
+          formLoginConfigurer ->
+            formLoginConfigurer
+              .loginPage("/login")
+              .loginProcessingUrl("/do-login")
+              .defaultSuccessUrl("/index")
+              .permitAll()
+        )
+        .logout(
+          logoutConfigurer ->
+            logoutConfigurer
+              .invalidateHttpSession(true)
+              .clearAuthentication(true)
+              .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+              .logoutSuccessUrl("/login?logout")
+              .permitAll()
+        );
 
     return http.build();
   }

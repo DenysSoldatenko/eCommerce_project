@@ -66,9 +66,11 @@ public class CartController {
    *         or a redirect to the login page if not authenticated
    */
   @PostMapping("/add-to-cart")
-  public String addItemToCart(@RequestParam("id") Long productId,
+  public String addItemToCart(
+      @RequestParam("id") Long productId,
       @RequestParam(value = "quantity", required = false, defaultValue = "1") int quantity,
-      Principal principal, HttpServletRequest request) {
+      Principal principal, HttpServletRequest request
+  ) {
     Product product = productService.findProductById(productId);
     Customer customer = customerService.findCustomerByUsername(principal.getName());
     cartService.addItemToCart(product, quantity, customer);
@@ -87,9 +89,11 @@ public class CartController {
    *         or a redirect to the login page if not authenticated
    */
   @PostMapping("/update-cart")
-  public String updateCart(@RequestParam("quantity") int quantity,
-                           @RequestParam("id") Long productId,
-                           Model model, Principal principal) {
+  public String updateCart(
+      @RequestParam("quantity") int quantity,
+      @RequestParam("id") Long productId,
+      Model model, Principal principal
+  ) {
 
     if (quantity > productService.findProductById(productId).getCurrentQuantity()) {
       model.addAttribute("check", "Requested quantity exceeds available stock!");
@@ -115,8 +119,10 @@ public class CartController {
    *         or a redirect to the login page if not authenticated
    */
   @PostMapping("/delete-cart")
-  public String deleteItemFromCart(@RequestParam("id") Long productId,
-                                   Model model, Principal principal) {
+  public String deleteItemFromCart(
+      @RequestParam("id") Long productId,
+      Model model, Principal principal
+  ) {
     String username = principal.getName();
     Customer customer = customerService.findCustomerByUsername(username);
     Product product = productService.findProductById(productId);

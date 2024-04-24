@@ -38,8 +38,10 @@ public class ProductController {
    * @return the view name for displaying the product page
    */
   @GetMapping("/products/{pageNo}")
-  public String getProducts(Principal principal, HttpSession session,
-                            Model model, @PathVariable("pageNo") int pageNo) {
+  public String getProducts(
+      Principal principal, HttpSession session,
+      Model model, @PathVariable("pageNo") int pageNo
+  ) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
 
     List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();
@@ -62,8 +64,10 @@ public class ProductController {
    * @return the view name for displaying the product detail page
    */
   @GetMapping("/find-product/{id}")
-  public String findProductById(Principal principal, HttpSession session,
-                                @PathVariable("id") Long id, Model model) {
+  public String findProductById(
+      Principal principal, HttpSession session,
+      @PathVariable("id") Long id, Model model
+  ) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
 
     Product product = productService.findProductById(id);
@@ -84,8 +88,10 @@ public class ProductController {
    * @throws ResponseStatusException if the category is not found
    */
   @GetMapping("/products-in-category/{id}")
-  public String getProductsInCategory(Principal principal, HttpSession session,
-                                      @PathVariable("id") Long categoryId, Model model) {
+  public String getProductsInCategory(
+      Principal principal, HttpSession session,
+      @PathVariable("id") Long categoryId, Model model
+  ) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
 
     Optional<Category> category = categoryService.findCategoryById(categoryId);
@@ -146,8 +152,10 @@ public class ProductController {
    * @return the view name for displaying the search results
    */
   @GetMapping("/search-product")
-  public String searchProduct(Principal principal, HttpSession session,
-                              @RequestParam("keyword") String keyword, Model model) {
+  public String searchProduct(
+      Principal principal, HttpSession session,
+      @RequestParam("keyword") String keyword, Model model
+  ) {
     sessionAttributeSetter.setSessionAttributes(principal, session);
 
     List<CategoryDto> categoryDtoList = categoryService.getCategoryAndProductCounts();

@@ -1,5 +1,8 @@
 package com.example.customer.controllers;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 import com.example.customer.validations.AuthExceptionsService;
 import com.example.customer.validations.CustomerExceptionService;
 import com.example.library.dtos.CustomerDto;
@@ -17,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -54,9 +56,11 @@ public class AccountController {
    * @param attributes the RedirectAttributes object for adding flash attributes
    * @return the account home page view with success or fail message
    */
-  @RequestMapping(value = "/update-account", method = {RequestMethod.GET, RequestMethod.PUT})
-  public String updateCustomer(@ModelAttribute("customer") Customer customer,
-                               RedirectAttributes attributes) {
+  @RequestMapping(value = "/update-account", method = {GET, PUT})
+  public String updateCustomer(
+      @ModelAttribute("customer") Customer customer,
+      RedirectAttributes attributes
+  ) {
     customerExceptionService.validate(customer);
 
     if (Objects.equals(customerExceptionService.getErrorMessage(), "")) {
@@ -93,15 +97,19 @@ public class AccountController {
    * @return the change password page view
    */
   @PostMapping("/update-password")
-  public String updatePassword(@Valid @ModelAttribute("customerDto") CustomerDto customerDto,
-                               BindingResult result, Model model) {
+  public String updatePassword(
+      @Valid @ModelAttribute("customerDto") CustomerDto customerDto,
+      BindingResult result, Model model
+  ) {
     authExceptionsService.validate(customerDto, result, model);
     validatePasswordAndUpdate(customerDto, result, model);
     return "change-password";
   }
 
-  private void validatePasswordAndUpdate(CustomerDto customerDto,
-                                         BindingResult result, Model model) {
+  private void validatePasswordAndUpdate(
+      CustomerDto customerDto,
+      BindingResult result, Model model
+  ) {
     try {
       if (!result.hasErrors() && !model.containsAttribute("passwordError")) {
         Customer existingCustomer

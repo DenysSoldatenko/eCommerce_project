@@ -6,12 +6,11 @@ import com.example.library.models.Order;
 import com.example.library.models.ShoppingCart;
 import com.example.library.services.CustomerService;
 import com.example.library.services.OrderService;
+import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

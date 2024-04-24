@@ -21,7 +21,9 @@ public class CustomerServiceConfig implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
     Customer customer = customerRepository.findByUsername(username);
+
     if (customer == null) {
       throw new UsernameNotFoundException("Could not find username");
     }
@@ -29,10 +31,7 @@ public class CustomerServiceConfig implements UserDetailsService {
     return new User(
       customer.getUsername(),
       customer.getPassword(),
-      customer.getRoles()
-      .stream()
-      .map(role -> new SimpleGrantedAuthority(role.getName()))
-      .toList()
+      customer.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList()
     );
   }
 }

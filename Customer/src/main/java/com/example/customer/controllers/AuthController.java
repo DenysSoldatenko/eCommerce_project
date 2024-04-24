@@ -44,8 +44,10 @@ public class AuthController {
    * @return the view name for the register page or a redirect to the login page
    */
   @PostMapping("/do-register")
-  public String processRegister(@Valid @ModelAttribute("customerDto") CustomerDto customerDto,
-      BindingResult result, Model model) {
+  public String processRegister(
+      @Valid @ModelAttribute("customerDto") CustomerDto customerDto,
+      BindingResult result, Model model
+  ) {
 
     authExceptionsService.validate(customerDto, result, model);
 
