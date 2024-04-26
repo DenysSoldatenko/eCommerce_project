@@ -1,5 +1,7 @@
 package com.example.library.services.implementations;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import com.example.library.models.CartItem;
 import com.example.library.models.Customer;
 import com.example.library.models.Product;
@@ -10,7 +12,6 @@ import com.example.library.services.ShoppingCartService;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,8 +44,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
   @Override
   public void deleteCartById(Long id) {
     ShoppingCart shoppingCart = shoppingCartRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-        "Cart not found with id: " + id));
+        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Cart not found with id: " + id));
 
     for (CartItem cartItem : shoppingCart.getCartItems()) {
       cartItemService.deleteCartItemById(cartItem.getId());

@@ -1,11 +1,12 @@
 package com.example.library.utils;
 
+import static java.nio.file.Paths.get;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.example.library.models.Product;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,9 +28,11 @@ public class ImageManager {
    */
   public boolean uploadImage(MultipartFile imageProduct) {
     try {
-      Files.copy(imageProduct.getInputStream(),
-          Paths.get(UPLOAD_FOLDER, imageProduct.getOriginalFilename()),
-          StandardCopyOption.REPLACE_EXISTING);
+      Files.copy(
+          imageProduct.getInputStream(),
+          get(UPLOAD_FOLDER, imageProduct.getOriginalFilename()),
+          REPLACE_EXISTING
+      );
       log.info("Image uploaded: {} ", imageProduct.getOriginalFilename());
       return true;
     } catch (Exception e) {

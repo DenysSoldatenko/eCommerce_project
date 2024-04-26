@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "admins")
 public class Admin {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "admin_id")

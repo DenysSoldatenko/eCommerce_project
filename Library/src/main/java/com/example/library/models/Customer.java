@@ -32,6 +32,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "customers", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class Customer {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "customer_id")

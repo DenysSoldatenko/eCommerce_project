@@ -8,6 +8,7 @@ import com.example.library.models.ShoppingCart;
  * Service interface for managing shopping carts.
  */
 public interface ShoppingCartService {
+
   void addItemToCart(Product product, int quantity, Customer customer);
 
   void deleteCartById(Long id);

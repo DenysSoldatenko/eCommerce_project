@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  * Service interface for managing products.
  */
 public interface ProductService {
+
   List<ProductDto> findAll();
 
   void createProduct(MultipartFile imageProduct, ProductDto productDto) throws IOException;

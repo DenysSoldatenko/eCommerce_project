@@ -1,5 +1,7 @@
 package com.example.library.services.implementations;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 import com.example.library.dtos.ProductDto;
 import com.example.library.models.Product;
 import com.example.library.repositories.ProductRepository;
@@ -15,7 +17,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -98,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
   public ProductDto findProductDetailsById(Long id) {
     return productRepository.findById(id)
     .map(product -> modelMapper.map(product, ProductDto.class))
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
       "Product not found with id: " + id));
   }
 
@@ -131,8 +132,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public Product findProductById(Long id) {
     return productRepository.findById(id)
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-    "Product not found with id: " + id));
+    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Product not found with id: " + id));
   }
 
   @Override

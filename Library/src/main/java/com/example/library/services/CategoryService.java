@@ -10,6 +10,7 @@ import java.util.Optional;
  * Service interface for managing categories.
  */
 public interface CategoryService {
+
   List<Category> findAllCategories();
 
   void createCategory(Category category);
